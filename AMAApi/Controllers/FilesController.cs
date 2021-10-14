@@ -94,5 +94,9 @@ namespace FarmsApi.Controllers
             File.Delete(root + filename);
             return Ok();
         }
+
+
+
+
     }
 }

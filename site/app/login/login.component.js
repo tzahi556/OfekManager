@@ -13,8 +13,8 @@
     function LoginController(authenticationService, $state) {
         this.login = _login;
 
-        this.email = "tzahi556@gmail.com";
-        this.password = "123";
+        //this.email = "tzahi556@gmail.com";
+        //this.password = "123";
         function _login() {
 
            

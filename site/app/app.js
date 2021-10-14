@@ -34,14 +34,14 @@
             }
         });
 
-        //$stateProvider.state('contact', {
-        //    url: '/contact/',
-        //    views: {
-        //        'main': {
-        //            template: '<contact></contact>'
-        //        }
-        //    }
-        //});
+        $stateProvider.state('docs', {
+            url: '/docs/',
+            views: {
+                'main': {
+                    template: '<docs></docs>'
+                }
+            }
+        });
 
         //$stateProvider.state('logout', {
         //    url: '/logout/',

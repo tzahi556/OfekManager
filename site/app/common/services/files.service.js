@@ -62,6 +62,33 @@
         }
     }]);
 
+    app.directive("filenamenotupload", ['filesService', function (filesService) {
+        return {
+            scope: {
+                filename: "=",
+                filenameCallback: "=",
+                workerid: "=",
+                folder: "="
+            },
+            link: function (scope, element, attributes) {
+                element.bind("change", function (changeEvent) {
+
+                    if (changeEvent.target.files.length > 0) {
+
+                        debugger
+                        //filesService.upload(changeEvent.target.files, scope.folder, scope.workerid).then(function (data) {
+
+                        //    //scope.filename = data;
+                        //    if (scope.filenameCallback) {
+                        //        scope.filenameCallback(data);
+                        //    }
+                        //});
+                    }
+                });
+            },
+        }
+    }]);
+
     app.directive("imagepicker", function (sharedValues, filesService) {
         return {
             scope: {
