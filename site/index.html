@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html lang="he" ng-app="app">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>אופק</title>
+
+    <!--<script src="https://code.jquery.com/jquery-3.5.0.js"></script>-->
+    <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+          crossorigin="anonymous">-->
+
+    <link href="node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="node_modules/bootstrap-rtl/dist/css/bootstrap-rtl.min.css" rel="stylesheet" />
+    <link href="node_modules/angular-loading-bar/build/loading-bar.min.css" rel="stylesheet" />
+    <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
+
+
+
+
+
+
+    <!--calendar-->
+    <!--<link rel="stylesheet" href="node_modules/fullcalendar/dist/fullcalendar.css">
+    <link rel="stylesheet" href="node_modules/fullcalendar-scheduler/dist/scheduler.css">
+    <link rel="stylesheet" href="app/common/components/calendar/calendar.css" />-->
+    <!--event-->
+    <!--<link rel="stylesheet" href="app/common/components/event/event.css" />-->
+    <!--notifications-->
+    <!--<link rel="stylesheet" href="app/common/components/notifications/notifications.css" />-->
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/autocomplete.css" />
+
+    <link  rel="stylesheet" href="css/bcPaint.css" />
+    <link  rel="stylesheet" href="css/demo-page.css" />
+    <link  rel="stylesheet" href="css/bcPaint.mobile.css" />
+
+
+    <style>
+        [ng\:cloak],
+        [ng-cloak],
+        [data-ng-cloak],
+        [x-ng-cloak],
+        .ng-cloak,
+        .x-ng-cloak {
+            display: none !important;
+        }
+    </style>
+
+    <link rel="manifest" href="manifest.json">
+
+
+
+
+
+
+</head>
+
+<body>
+    <header>
+        <div class="navbar navbar-static-top navbar-inverse">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        מערכת אופק  <span style="font-size:0.5em">1.0.0</span>
+                    </a>
+                </div>
+                <navigation></navigation>
+            </div>
+        </div>
+    </header>
+    <div ui-view="main" class="container-fluid"></div>
+    <common-operations></common-operations>
+
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="node_modules/angular/angular.js"></script>
+
+    <script src="node_modules/jquery/dist/cook.js"></script>
+    <script src="node_modules/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap.js"></script>
+    <script src="node_modules/angular-ui-bootstrap/dist/ui-bootstrap-tpls.js"></script>
+    <script src="node_modules/angular-loading-bar/build/loading-bar.js"></script>
+    <script src="node_modules/file-saverjs/FileSaver.js"></script>
+    <script src="node_modules/xlsx/dist/xlsx.core.min.js"></script>
+
+    <!--calendar-->
+    <script src="node_modules/moment/moment.js"></script>
+    <script src="node_modules/fullcalendar/dist/fullcalendar.js"></script>
+    <script src="node_modules/fullcalendar/dist/locale/he.js"></script>
+    <script src="node_modules/fullcalendar-scheduler/dist/scheduler.js"></script>
+
+    <script src="app/app.js"></script>
+    <script src="css/autocomplete.js"></script>
+    <script src="css/bcPaint.js"></script>
+    <script src="css/jquery.blockUI.js"></script>
+
+    <!--common-->
+    <!--<script src="app/common/components/farmname/farmname.component.js"></script>
+    <script src="app/common/components/calendar/calendar.component.js"></script>
+    <script src="app/common/components/event/event.component.js"></script>
+    <script src="app/common/components/pay/pay.component.js"></script>
+    <script src="app/common/components/comments/comments.component.js"></script>
+    <script src="app/common/components/newstudent/newstudent.component.js"></script>
+    <script src="app/common/components/matrotal/matrotal.component.js"></script>
+    <script src="app/common/components/schedular/schedular.component.js"></script>
+
+
+
+    <script src="app/common/components/reportMonth/reportMonth.component.js"></script>
+    <script src="app/common/components/closetoken/closetoken.component .js"></script>
+
+    <script src="app/common/components/notifications/notifications.component.js"></script>
+    <script src="app/common/components/common.operations/common.operations.component.js"></script>-->
+
+    <script src="app/common/values/shared.value.js"></script>
+    <script src="app/common/directives/email.validator.directrive.js"></script>
+    <script src="app/common/directives/expandable.directive.js"></script>
+    <script src="app/common/services/users.service.js"></script>
+    <!--<script src="app/common/services/lessons.service.js"></script>-->
+    <script src="app/common/services/auth.interceptor.service.js"></script>
+    <script src="app/common/services/auth.service.js"></script>
+    <!--<script src="app/common/services/farms.service.js"></script>-->
+    <!--<script src="app/common/services/horses.service.js"></script>-->
+    <!--<script src="app/common/services/notifications.service.js"></script>-->
+    <script src="app/common/services/files.service.js"></script>
+    <script src="app/common/filters/date/date.filter.js"></script>
+    <script src="app/common/components/navigation/navigation.component.js"></script>
+
+    <!--<script src="app/contact/contact.component.js"></script>
+    <script src="app/users/users.component.js"></script>
+    <script src="app/users/user.component.js"></script>
+    <script src="app/instructors/instructor.component.js"></script>
+    <script src="app/instructors/instructors.component.js"></script>
+    <script src="app/students/student.component.js"></script>-->
+
+    <script src="app/users/users.component.js"></script>
+    <script src="app/users/user.component.js"></script>
+    <script src="app/aws/awsmangers.component.js"></script>
+    <script src="app/aws/bindtodata.component.js"></script>
+    <script src="app/aws/awsauto.component.js"></script>
+    <script src="app/aws/awspools.component.js"></script>
+    <script src="app/awshistory/awsmangershistory.component.js"></script>
+    <script src="app/awshistory/awsmangershistoryphrase.component.js"></script>
+    <script src="app/workers/workers.component.js"></script>
+    <script src="app/workers/worker.component.js"></script>
+    <!--<script src="app/farms/farm.component.js"></script>
+    <script src="app/farms/farmmanager.component.js"></script>
+    <script src="app/farms/farms.component.js"></script>
+    <script src="app/horses/horse.component.js"></script>
+    <script src="app/horses/horses.component.js"></script>-->
+    <!--<script src="app/lessons/lessons.component.js"></script>-->
+    <!--<script src="app/notifications/notifications.component.js"></script>-->
+    <!--<script src="app/reports/reports.component.js"></script>-->
+    <script src="app/login/login.component.js"></script>
+
+
+
+    <script>
+
+        function alertMessage(mes) {
+            $('#hmessage').html(mes);
+            $.blockUI({ message: $('#question'), css: { width: '275px' } });
+
+        }
+
+
+
+    </script>
+
+    <div id="question" style="display:none; cursor: default">
+        <h3 id="hmessage"></h3>
+        <input type="button" class="btn  btn-info" id="yes" value="אישור" onclick="$.unblockUI();" />
+
+    </div>
+
+</body>
+
+</html>
