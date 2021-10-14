@@ -486,8 +486,14 @@
                         obj["ImgData"] = "";
 
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
+
+                      
+
                         $.unblockUI();
-                        alertMessage('הנתונים נשלחו למשרד בהצלחה!');
+                        if (worker.Status =="נשלח למשרד")
+                            alertMessage('הנתונים נשלחו למשרד בהצלחה!');
+                        else
+                            alertMessage(worker.Status);
                        
                     }.bind(this));
                 }

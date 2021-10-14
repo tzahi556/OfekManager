@@ -54,8 +54,8 @@ namespace FarmsApi.Services
             {
 
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
-                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath(@"/Uploads/" + w.Id);
+                var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
+                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
 
                 if (!Directory.Exists(BaseLinkSite))
                 {
@@ -102,7 +102,7 @@ namespace FarmsApi.Services
                                     {
 
                                         Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
-                                        //logo.ScaleAbsolute(500, 300);
+                                
 
 
                                         Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
@@ -246,7 +246,7 @@ namespace FarmsApi.Services
 
            
             //מעתיק את כל המסמכים הפידףים המצורפים
-            var BaseLinkSite2 = System.Web.HttpContext.Current.Server.MapPath(@"/Uploads/" + w.Id);
+            var BaseLinkSite2 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
             string sourceDir = BaseLinkSite2;
             string OutputFile = BaseLinkSite2 + "/OfekAllPdfTemp.pdf";
             string OutputFileDestination = BaseLinkSite2 + "/OfekAllPdf.pdf";
@@ -686,7 +686,7 @@ namespace FarmsApi.Services
             try
             {
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
+                var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
                 var BaseLinkSite = @"C:\Dev\Ofek\site\";
 
                 string existingFile = System.IO.Path.Combine(BaseLink, "OfekAll.pdf");
@@ -839,107 +839,107 @@ namespace FarmsApi.Services
             return new string(charArray);
         }
 
-        public void TestPdfNew(int llx, int lly, int urx, int ury, string text)
-        {
+        //public void TestPdfNew(int llx, int lly, int urx, int ury, string text)
+        //{
 
 
-            // step 1: creation of a document-object
-            Document document = new Document();
+        //    // step 1: creation of a document-object
+        //    Document document = new Document();
 
 
-            try
-            {
+        //    try
+        //    {
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
-                var BaseLinkSite = @"C:\Dev\Ofek\site\";
+        //        var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
+        //        var BaseLinkSite = @"C:\Dev\Ofek\site\";
 
-                string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
+        //        string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
 
-                string newFile = System.IO.Path.Combine(BaseLinkSite, "102.pdf");
+        //        string newFile = System.IO.Path.Combine(BaseLinkSite, "102.pdf");
 
-                if (File.Exists(newFile))
-                {
-                    File.Delete(newFile);
-                }
-
-
-                PdfReader reader = new PdfReader(existingFile);
+        //        if (File.Exists(newFile))
+        //        {
+        //            File.Delete(newFile);
+        //        }
 
 
-                //Create a new stream for our output file (this could be a MemoryStream, too)
-                using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    //Use a PdfStamper to bind our source file with our output file
-                    using (PdfStamper stamper = new PdfStamper(reader, fs))
-                    {
+        //        PdfReader reader = new PdfReader(existingFile);
 
 
-
-                        //In case of conflict we want our new text to be written "on top" of any existing content
-                        //Get the "Over" state for page 1
-                        PdfContentByte cb = stamper.GetOverContent(1);
+        //        //Create a new stream for our output file (this could be a MemoryStream, too)
+        //        using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
+        //        {
+        //            //Use a PdfStamper to bind our source file with our output file
+        //            using (PdfStamper stamper = new PdfStamper(reader, fs))
+        //            {
 
 
 
-
-
-                        ColumnText ct = new ColumnText(cb);
-
-                        ////Create a single column who's lower left corner is at 100x100 and upper right is at 500x200
-                        ct.SetSimpleColumn(llx, lly, urx, ury);
-
-
-                        BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
-                        Font font = new Font(bf, 14);
-
-                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-
-
-                        //String text2 = "<img src='C:/Dev/Ofek/site/images/klalitPlatinum_.png' />";
-                        //List<IElement> parsedText = ConvertToHtmlForColumnText(text2);
-
-                        //ct.Add(parsedText);
-
-                        //Add a higher level object
-                        ct.AddElement(new Paragraph(text, font));
-
-
-                        //var rect = new iTextSharp.text.Rectangle(llx, lly, urx, ury);
-                        //rect.Border = iTextSharp.text.Rectangle.BOX;
-                        //rect.BorderWidth = 5;
-                        //rect.BorderColor = BaseColor.PINK;
-                        //cb.Rectangle(rect);
-
-
-
-
-                        //Flush the text buffer
-                        ct.Go();
-
-                    }
-                }
+        //                //In case of conflict we want our new text to be written "on top" of any existing content
+        //                //Get the "Over" state for page 1
+        //                PdfContentByte cb = stamper.GetOverContent(1);
 
 
 
 
 
-            }
-            catch (DocumentException de)
-            {
-                Console.Error.WriteLine(de.Message);
-            }
-            catch (IOException ioe)
-            {
-                Console.Error.WriteLine(ioe.Message);
-            }
+        //                ColumnText ct = new ColumnText(cb);
+
+        //                ////Create a single column who's lower left corner is at 100x100 and upper right is at 500x200
+        //                ct.SetSimpleColumn(llx, lly, urx, ury);
 
 
-            // step 5: we close the document
-            document.Close();
+        //                BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
+        //                Font font = new Font(bf, 14);
+
+        //                ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
 
-        }
+
+        //                //String text2 = "<img src='C:/Dev/Ofek/site/images/klalitPlatinum_.png' />";
+        //                //List<IElement> parsedText = ConvertToHtmlForColumnText(text2);
+
+        //                //ct.Add(parsedText);
+
+        //                //Add a higher level object
+        //                ct.AddElement(new Paragraph(text, font));
+
+
+        //                //var rect = new iTextSharp.text.Rectangle(llx, lly, urx, ury);
+        //                //rect.Border = iTextSharp.text.Rectangle.BOX;
+        //                //rect.BorderWidth = 5;
+        //                //rect.BorderColor = BaseColor.PINK;
+        //                //cb.Rectangle(rect);
+
+
+
+
+        //                //Flush the text buffer
+        //                ct.Go();
+
+        //            }
+        //        }
+
+
+
+
+
+        //    }
+        //    catch (DocumentException de)
+        //    {
+        //        Console.Error.WriteLine(de.Message);
+        //    }
+        //    catch (IOException ioe)
+        //    {
+        //        Console.Error.WriteLine(ioe.Message);
+        //    }
+
+
+        //    // step 5: we close the document
+        //    document.Close();
+
+
+        //}
 
         public List<IElement> ConvertToHtmlForColumnText(String text)
         {
@@ -948,64 +948,61 @@ namespace FarmsApi.Services
             return listHandler.List;
         }
 
-        public void TestPdf()
-        {
+        //public void TestPdf()
+        //{
 
 
-            // step 1: creation of a document-object
-            Document document = new Document();
+        //    // step 1: creation of a document-object
+        //    Document document = new Document();
 
 
-            try
-            {
+        //    try
+        //    {
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
-                var BaseLinkSite = @"C:\Dev\Ofek\site\";
+        //        var BaseLink = System.Web.HttpContext.Current.Server.MapPath(@"/App_Data/");
+        //        var BaseLinkSite = @"C:\Dev\Ofek\site\";
 
-                string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
+        //        string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
 
-                string newFile = System.IO.Path.Combine(BaseLinkSite, "102.pdf");
+        //        string newFile = System.IO.Path.Combine(BaseLinkSite, "102.pdf");
 
-                if (File.Exists(newFile))
-                {
-                    File.Delete(newFile);
-                }
+        //        if (File.Exists(newFile))
+        //        {
+        //            File.Delete(newFile);
+        //        }
 
-                //using (FileStream fs = new FileStream(existingFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                //{
-                //    using (Document doc = new Document(PageSize.LETTER))
-                //    {
-                //        using (PdfWriter writer = PdfWriter.GetInstance(doc, fs))
-                //        {
-                //            doc.Open();
+        //        //using (FileStream fs = new FileStream(existingFile, FileMode.Create, FileAccess.Write, FileShare.None))
+        //        //{
+        //        //    using (Document doc = new Document(PageSize.LETTER))
+        //        //    {
+        //        //        using (PdfWriter writer = PdfWriter.GetInstance(doc, fs))
+        //        //        {
+        //        //            doc.Open();
 
-                //            doc.Add(new Paragraph("This is a test"));
+        //        //            doc.Add(new Paragraph("This is a test"));
 
-                //            doc.Close();
-                //        }
-                //    }
-                //}
+        //        //            doc.Close();
+        //        //        }
+        //        //    }
+        //        //}
 
-                //Bind a PdfReader to our first document
-                PdfReader reader = new PdfReader(existingFile);
-
-
-
-
-                //for (int page = 1; page <= reader.NumberOfPages; page++)
-                //{
-                //    ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
-
-                //    string currentPageText = PdfTextExtractor.GetTextFromPage(reader, page, strategy);
-                //    if (currentPageText.Contains("דבוע סיטרכ"))
-                //    {
-
-                //        //pages.Add(page);
-                //    }
-                //}
+        //        //Bind a PdfReader to our first document
+        //        PdfReader reader = new PdfReader(existingFile);
 
 
 
+
+        //        //for (int page = 1; page <= reader.NumberOfPages; page++)
+        //        //{
+        //        //    ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+
+        //        //    string currentPageText = PdfTextExtractor.GetTextFromPage(reader, page, strategy);
+        //        //    if (currentPageText.Contains("דבוע סיטרכ"))
+        //        //    {
+
+        //        //        //pages.Add(page);
+        //        //    }
+        //        //}
 
 
 
@@ -1016,12 +1013,15 @@ namespace FarmsApi.Services
 
 
 
-                //Create a new stream for our output file (this could be a MemoryStream, too)
-                using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    //Use a PdfStamper to bind our source file with our output file
-                    using (PdfStamper stamper = new PdfStamper(reader, fs))
-                    {
+
+
+
+        //        //Create a new stream for our output file (this could be a MemoryStream, too)
+        //        using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
+        //        {
+        //            //Use a PdfStamper to bind our source file with our output file
+        //            using (PdfStamper stamper = new PdfStamper(reader, fs))
+        //            {
 
 
 
@@ -1031,80 +1031,80 @@ namespace FarmsApi.Services
 
 
 
-                        //In case of conflict we want our new text to be written "on top" of any existing content
-                        //Get the "Over" state for page 1
-                        PdfContentByte cb = stamper.GetOverContent(1);
+        //                //In case of conflict we want our new text to be written "on top" of any existing content
+        //                //Get the "Over" state for page 1
+        //                PdfContentByte cb = stamper.GetOverContent(1);
 
-                        //Begin text command
-                        cb.BeginText();
-                        //Set the font information
-                        cb.SetFontAndSize(BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true), 16f);
-                        //Position the cursor for drawing
-                        cb.MoveText(50, 50);
-
-
-                        // 290.6475x742.3978
-                        //Write some text
-                        cb.ShowText("מה קורה???");
-                        //End text command
-                        cb.EndText();
-
-                        //Create a new ColumnText object to write to
-                        ColumnText ct = new ColumnText(cb);
-                        //Create a single column who's lower left corner is at 100x100 and upper right is at 500x200
-                        ct.SetSimpleColumn(500, 200, 100, 100);
-                        //290.6475F, 742.3978F, 347.8235F, 756.3978F
-                        //llx:290.6475 urx:347.8235 ury:756.3978 lly:742.3978
-                        //Left:290.6475 Right:347.8235 Top:756.3978 Bootom:742.3978
-
-                        BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
-                        Font font = new Font(bf, 14);
-
-                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-                        //Add a higher level object
-                        ct.AddElement(new Paragraph("מה קורה?", font));
+        //                //Begin text command
+        //                cb.BeginText();
+        //                //Set the font information
+        //                cb.SetFontAndSize(BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true), 16f);
+        //                //Position the cursor for drawing
+        //                cb.MoveText(50, 50);
 
 
-                        var rect = new iTextSharp.text.Rectangle(500, 200);
-                        rect.Border = iTextSharp.text.Rectangle.BOX;
-                        rect.BorderWidth = 5;
-                        rect.BorderColor = new BaseColor(0, 0, 0);
-                        cb.Rectangle(rect);
+        //                // 290.6475x742.3978
+        //                //Write some text
+        //                cb.ShowText("מה קורה???");
+        //                //End text command
+        //                cb.EndText();
 
-                        rect = new iTextSharp.text.Rectangle(200, 200, 100, 400);
-                        rect.Border = iTextSharp.text.Rectangle.BOX;
-                        rect.BorderWidth = 5;
-                        rect.BorderColor = BaseColor.PINK;
-                        cb.Rectangle(rect);
+        //                //Create a new ColumnText object to write to
+        //                ColumnText ct = new ColumnText(cb);
+        //                //Create a single column who's lower left corner is at 100x100 and upper right is at 500x200
+        //                ct.SetSimpleColumn(500, 200, 100, 100);
+        //                //290.6475F, 742.3978F, 347.8235F, 756.3978F
+        //                //llx:290.6475 urx:347.8235 ury:756.3978 lly:742.3978
+        //                //Left:290.6475 Right:347.8235 Top:756.3978 Bootom:742.3978
+
+        //                BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
+        //                Font font = new Font(bf, 14);
+
+        //                ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+        //                //Add a higher level object
+        //                ct.AddElement(new Paragraph("מה קורה?", font));
 
 
+        //                var rect = new iTextSharp.text.Rectangle(500, 200);
+        //                rect.Border = iTextSharp.text.Rectangle.BOX;
+        //                rect.BorderWidth = 5;
+        //                rect.BorderColor = new BaseColor(0, 0, 0);
+        //                cb.Rectangle(rect);
 
-                        //Flush the text buffer
-                        ct.Go();
-
-                    }
-                }
+        //                rect = new iTextSharp.text.Rectangle(200, 200, 100, 400);
+        //                rect.Border = iTextSharp.text.Rectangle.BOX;
+        //                rect.BorderWidth = 5;
+        //                rect.BorderColor = BaseColor.PINK;
+        //                cb.Rectangle(rect);
 
 
 
+        //                //Flush the text buffer
+        //                ct.Go();
+
+        //            }
+        //        }
 
 
-            }
-            catch (DocumentException de)
-            {
-                Console.Error.WriteLine(de.Message);
-            }
-            catch (IOException ioe)
-            {
-                Console.Error.WriteLine(ioe.Message);
-            }
 
 
-            // step 5: we close the document
-            document.Close();
+
+        //    }
+        //    catch (DocumentException de)
+        //    {
+        //        Console.Error.WriteLine(de.Message);
+        //    }
+        //    catch (IOException ioe)
+        //    {
+        //        Console.Error.WriteLine(ioe.Message);
+        //    }
 
 
-        }
+        //    // step 5: we close the document
+        //    document.Close();
+
+
+        //}
 
 
 

@@ -492,7 +492,7 @@ namespace FarmsApi.Services
                     client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
                     client.EnableSsl = false;
 
-                    string Body = "<b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.";
+                    string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div></html>";
                     
                     MailMessage actMSG = new MailMessage(
                                             "office@ofekmanage.com",
@@ -502,23 +502,32 @@ namespace FarmsApi.Services
                     
                     
                     actMSG.IsBodyHtml = true;
-                    var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath(@"/Uploads/" + w.Id);
+                    var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
                     Attachment attachment = new Attachment(BaseLinkSite + "/OfekAllPdf.pdf");
 
                     actMSG.Attachments.Add(attachment);
                     client.Send(actMSG);
 
-
                     w.Status = "נשלח למשרד";
 
-                    UpdateWorker(w);
 
                 }
                 catch (Exception ex)
                 {
                     w.Status = "תקלה שליחת נתונים";
 
-                    UpdateWorker(w);
+                   // w.Status = ex.InnerException.ToString();
+                }
+                finally
+                {
+                    using (var Context = new Context())
+                    {
+                       
+                        Context.Entry(w).State = System.Data.Entity.EntityState.Modified;
+                        Context.SaveChanges();
+
+                    }
+
 
                 }
 
