@@ -6,6 +6,19 @@
         padding:0px !important;
         margin:0px !important;
     }
+
+    .signature {
+
+        height: 140px;
+        border: 1px solid gray;
+        border-radius: 5px;
+    }
+
+        .signature canvas {
+            height: 100%;
+            width: 100%;
+        }
+
 </style>
 <!--<div id="loader"></div>-->
 
@@ -2030,21 +2043,28 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-12">
-                                <div id="bcPaint"></div>
+
+
+                                <signature-pad dataurl="storedSignature" accept="accept" clear="clear"></signature-pad>
+                                <!--<button ng-click="clear()">Reset</button>
+        <button ng-click="restore()">Clear and restore</button>-->
+                                <!--<div id="bcPaint"></div>-->
                             </div>
 
+                            <div class="col-md-12">
 
+                                </div>
 
-                            <div class="col-md-6">
-                                <label class="tp-help-below">ניתן לחתום בעזרת העכבר או עם האצבע על מסך מגע.</label>
+                                <div class="col-md-6">
+                                    <label class="tp-help-below">ניתן לחתום בעזרת העכבר או עם האצבע על מסך מגע.</label>
+                                </div>
+
+                                <div class="col-md-6" style="text-align:left">
+                                    <div class="btn  btn-primary" ng-click="$ctrl.clearSignuture()">נקה חתימה</div>
+                                </div>
+
                             </div>
-
-                            <div class="col-md-6" style="text-align:left">
-                                <div class="btn  btn-primary" ng-click="$ctrl.clearSignuture()">נקה חתימה</div>
-                            </div>
-
                         </div>
-                    </div>
 
 
 

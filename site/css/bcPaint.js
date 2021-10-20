@@ -35,7 +35,7 @@ $(document).ready(function(){
 							color 			: $(''),
 							canvasContainer : $('<div class="col-sm-12 col-md-12" id="bcPaint-canvas-container"></div>'),
 							canvasPane 		: $('<canvas id="bcPaintCanvas" class="border border-dark rounded"></canvas>'),
-			                bottom: $('<div class="col-sm-12 col-md-12 text-center mt-3" id="bcPaint-bottom"></div>'),
+			                bottom:           $('<div class="col-sm-12 col-md-12 text-center mt-3" id="bcPaint-bottom"></div>'),
 							buttonReset 	: $(''),
 							buttonSave		: $('')
 						},
@@ -99,12 +99,14 @@ $(document).ready(function(){
 
 			// bind touch actions
 			paintCanvas.addEventListener('touchstart', function (e) {
-
-				e.preventDefault();
+				
+				//
 				$.fn.bcPaint.dispatchMouseEvent(e, 'mousedown');
+				e.preventDefault();
 			});
 			paintCanvas.addEventListener('touchend', function(e){
-  				$.fn.bcPaint.dispatchMouseEvent(e, 'mouseup');
+				$.fn.bcPaint.dispatchMouseEvent(e, 'mouseup');
+
 			});
 			paintCanvas.addEventListener('touchmove', function(e){
 				$.fn.bcPaint.dispatchMouseEvent(e, 'mousemove');
@@ -113,7 +115,7 @@ $(document).ready(function(){
 			// Prevent scrolling on touch event
 			document.body.addEventListener("touchstart", function (e) {
 
-				
+			
 				if (e.target == 'paintCanvas') {
 					
 			      e.preventDefault();

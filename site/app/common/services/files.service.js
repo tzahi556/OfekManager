@@ -74,8 +74,10 @@
                 element.bind("change", function (changeEvent) {
 
                     if (changeEvent.target.files.length > 0) {
-
-                        debugger
+                            if (scope.filenameCallback) {
+                                scope.filenameCallback(changeEvent.target.files);
+                            }
+                     
                         //filesService.upload(changeEvent.target.files, scope.folder, scope.workerid).then(function (data) {
 
                         //    //scope.filename = data;

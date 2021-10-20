@@ -30,17 +30,27 @@
        
 
         function _uploadFile(file) {
-            this.tazfiles = this.tazfiles || [];
+
             this.files = this.files || [];
-            var allfiles = file.split(",") || [];
+            this.tazfiles = this.tazfiles || [];
+
+           // for (var i in file) {
+
+                this.tazfiles.push(file[0]);
+
+            //}
+
+
+            //this.files = this.files || [];
+            //var allfiles = file.split(",") || [];
 
            
 
-            for (var i in allfiles) {
-                var Obj = { "Id": 0, "Type": 1, "FileName": allfiles[i] };
-                this.files.push(Obj);
-                this.tazfiles.push(Obj);
-            }
+            //for (var i in allfiles) {
+            //    var Obj = { "Id": 0, "Type": 1, "FileName": allfiles[i] };
+            //    this.files.push(Obj);
+            //    this.tazfiles.push(Obj);
+            //}
            
         }
 

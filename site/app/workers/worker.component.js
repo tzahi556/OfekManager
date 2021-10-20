@@ -87,8 +87,8 @@
             }.bind(this));
 
 
-
-            $('#bcPaint').bcPaint();
+           
+            //$('#bcPaint').bcPaint();
 
 
             this.tazfiles = this.getFileName(1);// this.files.filter(x => x.Type == 1)[0].FileName;
@@ -325,7 +325,10 @@
             //context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
 
            // $('#bcPaintCanvas').html('');
-            $.fn.bcPaint.clearCanvas();
+          //  $.fn.bcPaint.clearCanvas();
+
+
+            $scope.clear();
 
           //  $.fn.bcPaint.export();
         }
@@ -452,15 +455,21 @@
             if (type == 1) {
                //$.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע שומרים את הנתונים  <br/>אנא המתנ/י...</div></h5>' });
                
-               
-               
-                var paintCanvas = document.getElementById('bcPaintCanvas');
-                var imgData = paintCanvas.toDataURL('image/png');
-                obj["ImgData"] = imgData;
-
-                // אם זה ריק אל תשלח כלום
-                if (imgData.indexOf("ECBAgQIEDgAQNaAJ+CzbUNAAAAAElFTkSuQmCC") != -1)
+                var Signature = $scope.accept();
+                if (!Signature.isEmpty) {
+                    obj["ImgData"] = Signature.dataUrl;
+                } else {
                     obj["ImgData"] = "";
+
+                }
+
+                //var paintCanvas = document.getElementById('bcPaintCanvas');
+                //var imgData = paintCanvas.toDataURL('image/png');
+                //obj["ImgData"] = imgData;
+
+                //// אם זה ריק אל תשלח כלום
+                //if (imgData.indexOf("ECBAgQIEDgAQNaAJ+CzbUNAAAAAElFTkSuQmCC") != -1)
+                //    obj["ImgData"] = "";
               
                 usersService.updateWorker(obj, this.files,this.childs,type).then(function (worker) {
                   //  this.worker = worker;
@@ -477,13 +486,14 @@
 
 
 
-                    var paintCanvas = document.getElementById('bcPaintCanvas');
-                    var imgData = paintCanvas.toDataURL('image/png');
-                    obj["ImgData"] = imgData;
-
-                    // אם זה ריק אל תשלח כלום
-                    if (imgData.indexOf("ECBAgQIEDgAQNaAJ+CzbUNAAAAAElFTkSuQmCC") != -1)
+                    var Signature = $scope.accept();
+                    if (!Signature.isEmpty) {
+                        obj["ImgData"] = Signature.dataUrl;
+                    } else {
                         obj["ImgData"] = "";
+
+                    }
+
 
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
 
@@ -509,16 +519,16 @@
             if (type == 3) {
                 $.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע מעבדים את הנתונים ומייצרים קובץ PDF  <br/>אנא המתנ/י...</div></h5>' });
 
-                
-
-                var paintCanvas = document.getElementById('bcPaintCanvas');
-                var imgData = paintCanvas.toDataURL('image/png');
-                obj["ImgData"] = imgData;
-
-                // אם זה ריק אל תשלח כלום
-                if (imgData.indexOf("ECBAgQIEDgAQNaAJ+CzbUNAAAAAElFTkSuQmCC") != -1)
+                var Signature = $scope.accept();
+                if (!Signature.isEmpty) {
+                    obj["ImgData"] = Signature.dataUrl;
+                } else {
                     obj["ImgData"] = "";
 
+                }
+
+
+              
                 usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
                    
                     $.unblockUI();
