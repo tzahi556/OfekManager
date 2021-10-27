@@ -6,6 +6,10 @@ namespace FarmsApi.DataModels
 {
     public class Context : DbContext
     {
+
+        public DbSet<Banks> Banks { get; set; }
+        public DbSet<BanksBrunchs> BanksBrunchs { get; set; }
+
         public DbSet<User> Users { get; set; }
         public DbSet<Workers> Workers { get; set; }
         public DbSet<Cities> Cities { get; set; }

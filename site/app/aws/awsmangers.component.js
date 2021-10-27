@@ -35,8 +35,8 @@
 
         this.text = "";
 
-        this.scroll = 2000;
-        this.pageNumber = "2";
+        this.scroll = 0;
+        this.pageNumber = "1";
     
 
        // $("#divContainer").animate({ scrollTop: this.scroll }, "fast");

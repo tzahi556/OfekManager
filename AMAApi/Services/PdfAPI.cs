@@ -30,7 +30,7 @@ namespace FarmsApi.Services
     public class PdfAPI
     {
         public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
-      
+
         public string MavidPrati = ConfigurationSettings.AppSettings["MavidPrati"].ToString();
         public string MavidCtovet = ConfigurationSettings.AppSettings["MavidCtovet"].ToString();
         public string MavidPhone = ConfigurationSettings.AppSettings["MavidPhone"].ToString();
@@ -46,7 +46,7 @@ namespace FarmsApi.Services
 
 
             //    System.Threading.Thread.Sleep(5000);
-           
+
             Document document = new Document();
 
 
@@ -64,14 +64,14 @@ namespace FarmsApi.Services
 
                 // מעתיק את הטמפלט של כל הפידף
                 string existingFile = System.IO.Path.Combine(BaseLink, "OfekAll.pdf");
-                
+
                 // שם אותו זמני 
                 string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
 
                 // שם אותו קבוע עם נתונים 
                 string newFileDestination = System.IO.Path.Combine(BaseLinkSite, "OfekAll.pdf");
-              
-             
+
+
 
                 PdfReader reader = new PdfReader(existingFile);
 
@@ -86,12 +86,12 @@ namespace FarmsApi.Services
                         //Get the "Over" state for page 1
                         using (var Context = new Context())
                         {
-                            for (int m = 1; m < 9; m++)
+                            for (int m = 1; m < 10; m++)
                             {
                                 PdfContentByte cb = stamper.GetOverContent(m);
                                 var TestList = Context.Testpdfs.Where(x => x.PageNumber == m).ToList();
 
-                                TestList = GetDataFromObject(w, TestList,Context);
+                                TestList = GetDataFromObject(w, TestList, Context);
 
                                 BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
                                 foreach (var item in TestList)
@@ -102,7 +102,7 @@ namespace FarmsApi.Services
                                     {
 
                                         Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
-                                
+
 
 
                                         Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
@@ -130,7 +130,7 @@ namespace FarmsApi.Services
 
 
 
-                                    if (item.Comment=="Signuture")
+                                    if (item.Comment == "Signuture")
                                     {
 
 
@@ -159,12 +159,12 @@ namespace FarmsApi.Services
                                         ct.Go();
 
 
-                                       
+
                                         continue;
                                     }
-                                    
-                                    
-                                    
+
+
+
                                     int Space = item.Space;
                                     if (Space == 1)
                                     {
@@ -220,9 +220,9 @@ namespace FarmsApi.Services
 
                     if (File.Exists(newFile))
                     {
-                       
-                       File.Delete(newFile);
-                       
+
+                        File.Delete(newFile);
+
                     }
                 }
 
@@ -244,13 +244,13 @@ namespace FarmsApi.Services
 
             document.Close();
 
-           
+
             //מעתיק את כל המסמכים הפידףים המצורפים
             var BaseLinkSite2 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
             string sourceDir = BaseLinkSite2;
             string OutputFile = BaseLinkSite2 + "/OfekAllPdfTemp.pdf";
             string OutputFileDestination = BaseLinkSite2 + "/OfekAllPdf.pdf";
-           
+
             //בפנים יש צירוף של תמונות 
             CreateMergedPDF(OutputFile, sourceDir, OutputFileDestination);
 
@@ -259,7 +259,7 @@ namespace FarmsApi.Services
 
         }
 
-        private List<Testpdfs> GetDataFromObject(Workers w, List<Testpdfs> TestLists,Context Context)
+        private List<Testpdfs> GetDataFromObject(Workers w, List<Testpdfs> TestLists, Context Context)
         {
             List<Testpdfs> tp = new List<Testpdfs>();
 
@@ -284,21 +284,44 @@ namespace FarmsApi.Services
 
 
 
-               
+
 
 
 
 
                 var res = w[PropertyName];
 
-              //  if (res == null) continue;
+                //  if (res == null) continue;
 
-               
 
-                if (PropertyValue == "child")
+
+                if (PropertyValue == "1Brunch" && res != null )
                 {
 
-                    var WorkerChilds = Context.WorkerChilds.Where(x=>x.WorkerId==w.Id).ToList();
+                    string[] resSplit = res.ToString().Split('-');
+                    
+                    item.Word = resSplit[0].Trim();
+                    tp.Add(item);
+
+                }
+
+
+
+                else if (PropertyValue == "2Brunch" && res != null)
+                {
+                    string[] resSplit = res.ToString().Split('-');
+
+                    item.Word = resSplit[1].Trim();
+                    tp.Add(item);
+
+                }
+
+
+
+                else if (PropertyValue == "child")
+                {
+
+                    var WorkerChilds = Context.WorkerChilds.Where(x => x.WorkerId == w.Id).ToList();
 
                     for (int i = 0; i < WorkerChilds.Count; i++)
                     {
@@ -306,9 +329,9 @@ namespace FarmsApi.Services
 
                         var resChild = WorkerChilds[i][PropertyName];
 
-                        
 
-                        if(PropertyName=="BirthDate" && resChild!=null)
+
+                        if (PropertyName == "BirthDate" && resChild != null)
                         {
                             resChild = Convert.ToDateTime(resChild).ToString("ddMMyyyy");
 
@@ -331,27 +354,27 @@ namespace FarmsApi.Services
                         newChild.Font = item.Font;
                         newChild.Comment = item.Comment;
 
-                      
+
 
 
 
                         if (item.Word.Contains("x") && resChild.ToString() == "True")
                             newChild.Word = "x";
                         else
-                          if (resChild.ToString() == "False") { newChild.Word = ""; } else if(resChild!=null) { newChild.Word = resChild.ToString(); }
+                          if (resChild.ToString() == "False") { newChild.Word = ""; } else if (resChild != null) { newChild.Word = resChild.ToString(); }
 
-                       
+
 
                         tp.Add(newChild);
 
-                       
+
 
 
                     }
-                    
-                    
-                    
-                   // item.Word = Convert.ToDateTime(res).ToString("ddMMyyyy");
+
+
+
+                    // item.Word = Convert.ToDateTime(res).ToString("ddMMyyyy");
                     //  tp.Add(item);
 
                 }
@@ -359,7 +382,7 @@ namespace FarmsApi.Services
 
 
 
-                
+
 
                 else if (res != null && PropertyName == "TiumMasAnotherMaskuretSug")
                 {
@@ -369,7 +392,7 @@ namespace FarmsApi.Services
 
                 }
 
-                else if (PropertyName=="CurrentDate")
+                else if (PropertyName == "CurrentDate")
                 {
 
                     item.Word = DateTime.Now.ToString("dd.MM.yyyy");
@@ -413,7 +436,7 @@ namespace FarmsApi.Services
 
 
 
-               else if (res != null && PropertyName =="Kupa" )
+                else if (res != null && PropertyName == "Kupa")
                 {
 
                     item.Word = GetKupaName(res.ToString());
@@ -436,11 +459,11 @@ namespace FarmsApi.Services
 
                 }
 
-                else if (res != null && ((PropertyValue==null) || PropertyValue== res.ToString() || res.ToString()=="True") && res.ToString() != "False")
+                else if (res != null && ((PropertyValue == null) || PropertyValue == res.ToString() || res.ToString() == "True") && res.ToString() != "False")
                 {
-                    if (item.Word.Contains("x")) 
+                    if (item.Word.Contains("x"))
                         item.Word = "x";
-                    else 
+                    else
                         item.Word = res.ToString();
 
                     tp.Add(item);
@@ -452,7 +475,7 @@ namespace FarmsApi.Services
             //{
 
             //    var res = w.GetType().GetProperty(property.Name).GetValue(w, null);
-               
+
             //}
 
             return tp;
@@ -464,21 +487,21 @@ namespace FarmsApi.Services
             {
                 case "1":
                     return "כללית";
-                   
+
                 case "2":
                     return "מכבי";
-                   
+
                 case "3":
                     return "מאוחדת";
-                  
+
                 case "4":
                     return "לאומית";
-                  
+
 
 
                 default:
                     return "";
-                    
+
             }
         }
 
@@ -528,7 +551,7 @@ namespace FarmsApi.Services
                 //Console.WriteLine("Merging files count: " + files.Length);
                 int i = 1;
 
-              //  pdf.AddDocument(new PdfReader(sourceDir + "/OfekAll.pdf"));
+                //  pdf.AddDocument(new PdfReader(sourceDir + "/OfekAll.pdf"));
 
 
                 PdfReader newReader = new PdfReader(sourceDir + "/OfekAll.pdf");
@@ -557,8 +580,8 @@ namespace FarmsApi.Services
 
 
 
-                var filesImages = files.Where(x =>!x.Contains("Signature.png") && ImageExtensions.Contains(System.IO.Path.GetExtension(x).ToUpperInvariant())).ToList();
-                if (filesImages.Count>0)
+                var filesImages = files.Where(x => !x.Contains("Signature.png") && ImageExtensions.Contains(System.IO.Path.GetExtension(x).ToUpperInvariant())).ToList();
+                if (filesImages.Count > 0)
                 {
                     var filePath = sourceDir + "/ImagesAll.pdf";
                     CreateImagesPDF(sourceDir, pdf, filesImages);
@@ -583,7 +606,7 @@ namespace FarmsApi.Services
             }
         }
 
-    
+
 
         private void CreateImagesPDF(string sourceDir, PdfCopy pdf, List<string> filesImages)
         {
@@ -602,7 +625,7 @@ namespace FarmsApi.Services
                 // Open the document to enable you to write to the document  
                 document.Open();
 
-               // var files = Directory.GetFiles(sourceDir);
+                // var files = Directory.GetFiles(sourceDir);
 
 
                 foreach (var item in filesImages)
@@ -615,7 +638,7 @@ namespace FarmsApi.Services
 
                     //Resize image depend upon your need
                     float pageWidth = document.PageSize.Width - (35 + 35);
-                    jpg.ScaleToFit(pageWidth, 120f);
+                    jpg.ScaleToFit(document.PageSize.Width, document.PageSize.Height/3);
 
                     //Give space before image
 
@@ -720,7 +743,7 @@ namespace FarmsApi.Services
                         {
 
 
-                            for (int m = 1; m < 9; m++)
+                            for (int m = 1; m < 10; m++)
                             {
                                 PdfContentByte cb = stamper.GetOverContent(m);
                                 var TestList = Context.Testpdfs.Where(x => x.PageNumber == m).ToList();
@@ -729,7 +752,7 @@ namespace FarmsApi.Services
                                 {
                                     if (item.Comment == "Signuture" || item.Comment == "SignutureAmuta")
                                     {
-                                      
+
 
                                         Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
                                         Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
@@ -753,7 +776,7 @@ namespace FarmsApi.Services
                                         ct.Go();
 
                                         continue;
-                                    
+
                                     }
 
 

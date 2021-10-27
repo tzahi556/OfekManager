@@ -10,12 +10,15 @@
         bindings: {
             worker: '<',
             files: '<',
-            childs: '<'
+            childs: '<',
+            cities: '<',
+            banks: '<',
+            banksbrunchs: '<'
 
         }
     });
 
-    function WorkerController(usersService, $scope, $state, sharedValues, filesService, $window) {
+    function WorkerController(usersService, $scope, $state, sharedValues, filesService, $window, $timeout) {
 
         this.sharedValues = sharedValues;
         this.scope = $scope;
@@ -43,6 +46,7 @@
 
         this.removeFile = _removeFile.bind(this);
         this.init = _init.bind(this);
+        this.changeBank = _changeBank.bind(this);
 
         this.removeChild = _removeChild.bind(this);
         this.addNewChild = _addNewChild.bind(this);
@@ -51,44 +55,83 @@
 
 
         this.uploadsUri = sharedValues.apiUrl + '/uploads/'
+      
         this.foldertaz = "taz";
 
-        this.cities = [];
+     
         this.fileparud = "";
 
-       // this.childs = [];
+        // this.childs = [];
 
         this.ImageSignuture;
 
         this.init();
         function _init() {
-           
+
             var obj = this.worker;
 
-            
+
             Object.keys(obj).forEach(function (key, index) {
 
-                if (key.indexOf("Date") != -1 && obj[key])
-                {
-                    
-                    obj[key] = moment(obj[key]).startOf('day').toDate();
+                if (key.indexOf("Date") != -1 && obj[key]) {
+
+                    obj[key] = moment(obj[key]).format("DD/MM/YYYY");// .startOf('day').toDate();
 
                 }
-              
+
+               
+
             });
+
+
+            $('.date').inputmask("datetime", {
+                mask: "1/2/y",
+                placeholder: "dd/mm/yyyy",
+                leapday: "-02-29",
+                separator: "/",
+                alias: "dd/mm/yyyy"
+            });
+
+
+          //  usersService.getMasterTable(2).then(function (res) {
+
+               // this.cities = res; 
+
+            //var countUp = function () {
+            //    $scope.timeInMs += 500;
+            //    $timeout(countUp, 500);
+            //}
+
+            //$timeout(autocomplete(document.getElementById("txtCity"), this.cities), 3000);
+            setTimeout(function () {
+                
+
+                autocomplete(document.getElementById("txtCity"), $scope.$ctrl.cities);
+
+                var allbanks = $scope.$ctrl.banks;
+
+                for (var i in allbanks) {
+                    allbanks[i].Name = allbanks[i].Name + " - " + allbanks[i].Id ;
+
+                }
+
+                autocomplete(document.getElementById("txtBanks"), allbanks);
+
+                
+               // if ($scope.$ctrl.worker.BankNumName) { $scope.$ctrl.changeBank();}
+
+                
+            }, 1000);
+
+
            
+              
 
-            usersService.getCitiesList().then(function (res) {
-
-                this.cities = res; //["מעגלים", "Albania", "Algeria", "Andorra", "Angola", "Anguilla", "Antigua &amp; Barbuda", "Argentina", "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan", "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia", "Bosnia &amp; Herzegovina", "Botswana", "Brazil", "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi", "Cambodia", "Cameroon", "Canada", "Cape Verde", "Cayman Islands", "Central Arfrican Republic", "Chad", "Chile", "China", "Colombia", "Congo", "Cook Islands", "Costa Rica", "Cote D Ivoire", "Croatia", "Cuba", "Curacao", "Cyprus", "Czech Republic", "Denmark", "Djibouti", "Dominica", "Dominican Republic", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea", "Estonia", "Ethiopia", "Falkland Islands", "Faroe Islands", "Fiji", "Finland", "France", "French Polynesia", "French West Indies", "Gabon", "Gambia", "Georgia", "Germany", "Ghana", "Gibraltar", "Greece", "Greenland", "Grenada", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea Bissau", "Guyana", "Haiti", "Honduras", "Hong Kong", "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle of Man", "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kosovo", "Kuwait", "Kyrgyzstan", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg", "Macau", "Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands", "Mauritania", "Mauritius", "Mexico", "Micronesia", "Moldova", "Monaco", "Mongolia", "Montenegro", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia", "Nauro", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand", "Nicaragua", "Niger", "Nigeria", "North Korea", "Norway", "Oman", "Pakistan", "Palau", "Palestine", "Panama", "Papua New Guinea", "Paraguay", "Peru", "Philippines", "Poland", "Portugal", "Puerto Rico", "Qatar", "Reunion", "Romania", "Russia", "Rwanda", "Saint Pierre &amp; Miquelon", "Samoa", "San Marino", "Sao Tome and Principe", "Saudi Arabia", "Senegal", "Serbia", "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands", "Somalia", "South Africa", "South Korea", "South Sudan", "Spain", "Sri Lanka", "St Kitts &amp; Nevis", "St Lucia", "St Vincent", "Sudan", "Suriname", "Swaziland", "Sweden", "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "Timor L'Este", "Togo", "Tonga", "Trinidad &amp; Tobago", "Tunisia", "Turkey", "Turkmenistan", "Turks &amp; Caicos", "Tuvalu", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States of America", "Uruguay", "Uzbekistan", "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Virgin Islands (US)", "Yemen", "Zambia", "Zimbabwe"];
-
-                autocomplete(document.getElementById("txtCity"), this.cities);
-
-            }.bind(this));
+            //}.bind(this));
 
 
-           
-            //$('#bcPaint').bcPaint();
+
+          
 
 
             this.tazfiles = this.getFileName(1);// this.files.filter(x => x.Type == 1)[0].FileName;
@@ -108,25 +151,74 @@
 
 
 
-            
+
             //var myCanvas = document.getElementById('bcPaintCanvas');
             //var ctx = myCanvas.getContext('2d');
             //var img = new Image;
             //img.onload = function () {
             //    ctx.drawImage(img, 0, 0); // Or at whatever offset you like
             //};
-          
+
             //img.src = this.uploadsUri + "/" + this.worker.Id + "/Signature.png";
 
-           
 
-           
+
+
 
 
 
 
         }
 
+        
+
+        function _changeBank() {
+
+
+           
+
+            this.worker.BrunchNumName = "";
+            var allbanksbrunchs = [];
+
+            var selectedBank = this.banks.filter(x => x.Name == this.worker.BankNumName);
+
+            if (selectedBank.length > 0) {
+
+                allbanksbrunchs = angular.copy(this.banksbrunchs.filter(x => x.BankId == selectedBank[0].Id));
+
+                for (var i in allbanksbrunchs) {
+                    allbanksbrunchs[i].Name = allbanksbrunchs[i].Id + " - " + allbanksbrunchs[i].Name;
+                }
+
+                autocomplete(document.getElementById("txtBanksBrunchs"), allbanksbrunchs);
+
+            }
+
+
+            //for (var i in this.banks) {
+                
+            //    var BankNumName = this.banks[i].Name;
+
+            //    if (BankNumName == this.worker.BankNumName) {
+
+            //        debugger
+            //        allbanksbrunchs = this.banksbrunchs.filter(x => x.BankId == this.banks[i].Id);
+
+            //        for (var i in allbanksbrunchs) {
+            //            allbanksbrunchs[i].Name = allbanksbrunchs[i].Id + " - " + allbanksbrunchs[i].Name;
+            //        }
+
+            //        autocomplete(document.getElementById("txtBanksBrunchs"),allbanksbrunchs);
+                 
+
+            //        break;
+            //    }
+
+            //}
+      //  alert(this.worker.BankNumName);
+
+        }
+        
 
         function _getFileName(type) {
 
@@ -324,13 +416,13 @@
             //var context = canvas.getContext('2d');
             //context.clearRect(0, 0, canvas.width, canvas.height); //clear html5 canvas
 
-           // $('#bcPaintCanvas').html('');
-          //  $.fn.bcPaint.clearCanvas();
+            // $('#bcPaintCanvas').html('');
+            //  $.fn.bcPaint.clearCanvas();
 
 
             $scope.clear();
 
-          //  $.fn.bcPaint.export();
+            //  $.fn.bcPaint.export();
         }
 
 
@@ -369,7 +461,7 @@
         }
 
         function _removeChild(child) {
-            
+
             for (var i in this.childs) {
                 if (this.childs[i].Id == child.Id) {
                     this.childs.splice(i, 1);
@@ -439,22 +531,41 @@
 
         function _saveWorker(type) {
 
+
+            function changeDateFormat(dateVal) {
+
+          
+
+                var dd = dateVal.substring(0, 2);
+                var mm = dateVal.substring(3, 5);
+                var yy = dateVal.substring(6, 11);
+
+
+
+                return yy + "-" + mm + "-" + dd;
+
+            }
+
             var obj = angular.copy(this.worker);
+
             Object.keys(obj).forEach(function (key, index) {
 
                 if (key.indexOf("Date") != -1 && obj[key]) {
 
-                    
-                    obj[key].setHours((obj[key]).getHours() + 3);
-              
+                    obj[key] = changeDateFormat(obj[key]);
+                    //  obj[key].setHours((obj[key]).getHours() + 3);
+
 
                 }
-                
+
             });
 
             if (type == 1) {
-               //$.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע שומרים את הנתונים  <br/>אנא המתנ/י...</div></h5>' });
-               
+
+              
+
+                //$.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע שומרים את הנתונים  <br/>אנא המתנ/י...</div></h5>' });
+
                 var Signature = $scope.accept();
                 if (!Signature.isEmpty) {
                     obj["ImgData"] = Signature.dataUrl;
@@ -470,18 +581,26 @@
                 //// אם זה ריק אל תשלח כלום
                 //if (imgData.indexOf("ECBAgQIEDgAQNaAJ+CzbUNAAAAAElFTkSuQmCC") != -1)
                 //    obj["ImgData"] = "";
-              
-                usersService.updateWorker(obj, this.files,this.childs,type).then(function (worker) {
-                  //  this.worker = worker;
-                   alertMessage('הנתונים נשמרו בהצלחה!');
-                   // $.unblockUI();
-                   //
+
+                usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
+                    //  this.worker = worker;
+                    alertMessage('הנתונים נשמרו בהצלחה!');
+                    // $.unblockUI();
+                    //
                 }.bind(this));
 
             }
 
             if (type == 2) {
                 if (this.scope.workerForm.$valid) {
+
+
+                    if (this.tazfiles.length == 0) {
+
+                        alertMessage('חובה לצרף צילום תעודת זהות!');
+                        return;
+                    }
+
                     $.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע מעבדים את הנתונים ומייצרים קובץ  PDF ושולחים אותו למשרד <br/>אנא המתנ/י...</div></h5>' });
 
 
@@ -497,14 +616,14 @@
 
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
 
-                      
+
 
                         $.unblockUI();
-                        if (worker.Status =="נשלח למשרד")
+                        if (worker.Status == "נשלח למשרד")
                             alertMessage('הנתונים נשלחו למשרד בהצלחה!');
                         else
                             alertMessage(worker.Status);
-                       
+
                     }.bind(this));
                 }
 
@@ -515,7 +634,7 @@
 
 
             }
-         
+
             if (type == 3) {
                 $.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע מעבדים את הנתונים ומייצרים קובץ PDF  <br/>אנא המתנ/י...</div></h5>' });
 
@@ -528,12 +647,12 @@
                 }
 
 
-              
+
                 usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
-                   
+
                     $.unblockUI();
                     $window.open(this.uploadsUri + "/" + this.worker.Id + "/OfekAllPdf.pdf", '_blank');
-                    
+
                 }.bind(this));
 
             }

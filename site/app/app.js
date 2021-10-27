@@ -3,7 +3,7 @@
     var app = angular.module('app', ['ui.router', 'angular-loading-bar', 'ui.bootstrap']);
 
     app.config(function ($urlRouterProvider, $stateProvider) {
-       
+
         $urlRouterProvider.otherwise(function ($inject) {
             $state = $inject.get('$state');
             usersService = $inject.get('usersService');
@@ -14,7 +14,7 @@
             }
             for (var i in roles) {
                 if (roles[i].id == role) {
-                   
+
                     $state.go(roles[i].homePage);
                 }
             }
@@ -29,7 +29,7 @@
                 controller: function ($stateParams) {
 
                     this.returnUrl = $stateParams.returnUrl;
-                   
+
                 }
             }
         });
@@ -61,7 +61,7 @@
         //    }
         //});
 
-       
+
         //$stateProvider.state('notifications', {
         //    url: '/notifications/',
         //    views: {
@@ -141,7 +141,7 @@
         //        'main': {
         //            template: '<farmmanager farmmanager="$ctrl.farmmanager" farminstructors="$ctrl.farminstructors" horses="$ctrl.horses" horsegroups="$ctrl.horsegroups" horsegroupshorses="$ctrl.horsegroupshorses" ></farmmanager>',
         //            controller: function (farmmanager, farminstructors, horses, horsegroups, horsegroupshorses) {
-                       
+
         //                this.farmmanager = farmmanager;
         //                this.farminstructors = farminstructors;
         //                this.horses = horses;
@@ -152,7 +152,7 @@
         //            controllerAs: '$ctrl',
         //            resolve: {
         //                farmmanager: function (farmsService, $stateParams) {
-                            
+
         //                    return farmsService.getMangerFarm();
         //                },
         //                farminstructors: function (farmsService, $stateParams) {
@@ -170,7 +170,7 @@
         //                    return horsesService.getSetHorseGroupsHorses(1);
         //                },
 
-                        
+
         //            }
         //        }
         //    }
@@ -231,8 +231,8 @@
         //                this.hozims = hozims;
         //                this.instructors = instructors;
         //                this.horsesmultiplefiles = horsesmultiplefiles;
-                        
-                        
+
+
 
         //            },
         //            controllerAs: '$ctrl',
@@ -314,7 +314,7 @@
                     controller: function (workers) {
 
                         this.workers = workers;
-                      
+
 
                     },
                     controllerAs: '$ctrl',
@@ -332,31 +332,52 @@
             url: '/worker/{id}/',
             views: {
                 'main': {
-                    template: '<worker worker="$ctrl.worker" files="$ctrl.files" childs="$ctrl.childs"></worker>',
-                    controller: function (worker, files, childs) {
+                    template: '<worker worker="$ctrl.worker" files="$ctrl.files" childs="$ctrl.childs" cities="$ctrl.cities" banks="$ctrl.banks"  banksbrunchs="$ctrl.banksbrunchs" ></worker>',
+                    controller: function (worker, files, childs, cities, banks, banksbrunchs) {
                         this.worker = worker;
                         this.files = files;
                         this.childs = childs;
+                        this.cities = cities;
+                        this.banks = banks;
+                        this.banksbrunchs = banksbrunchs;
+
                     },
                     controllerAs: '$ctrl',
                     resolve: {
                         worker: function (usersService, $stateParams) {
-                           
-                            
+
                             return usersService.getWorker($stateParams.id);
                         },
-                          files: function (usersService, $stateParams) {
-                           
-                            
-                              return usersService.getFiles($stateParams.id);
-                        }
+                        files: function (usersService, $stateParams) {
 
-                        ,
+                            return usersService.getFiles($stateParams.id);
+                        },
                         childs: function (usersService, $stateParams) {
 
-
                             return usersService.getWorkerChilds($stateParams.id);
+                        },
+
+                        cities: function (usersService, $stateParams) {
+
+                            return usersService.getMasterTable(1);
+                        },
+                        banks: function (usersService, $stateParams) {
+
+                            return usersService.getMasterTable(2);
+                        },
+                        banksbrunchs: function (usersService, $stateParams) {
+                             
+                              return usersService.getMasterTable(3);
                         }
+
+
+
+
+
+
+
+
+
                     }
                 }
             }
@@ -369,9 +390,9 @@
                 'main': {
                     template: '<users users="$ctrl.users"></users>',
                     controller: function (users) {
-                      
+
                         this.users = users;
-                      
+
                     },
                     controllerAs: '$ctrl',
                     resolve: {
@@ -391,7 +412,7 @@
                     template: '<user user="$ctrl.user" ></user>',
                     controller: function (user) {
                         this.user = user;
-                      
+
                     },
                     controllerAs: '$ctrl',
                     resolve: {
@@ -487,14 +508,14 @@
                 'main': {
                     template: '<awsmangershistory portfolios="$ctrl.portfolios" ></awsmangershistory>',
                     controller: function (portfolios) {
-                       
+
                         this.portfolios = portfolios;
 
                     },
                     controllerAs: '$ctrl',
                     resolve: {
                         portfolios: function (usersService) {
-                           
+
                             return usersService.getPortfolios();
                         }
 
@@ -532,15 +553,15 @@
                     template: '<awsmangers portfolios="$ctrl.portfolios" ></awsmangers>',
                     controller: function (portfolios) {
                         this.portfolios = portfolios;
-                       
+
                     },
                     controllerAs: '$ctrl',
                     resolve: {
                         portfolios: function (usersService) {
-                            
-                            return usersService.getPortfolios(100, 760, 500, 200, "מה קקקקק",14,1, -1,5);
+
+                            return usersService.getPortfolios(100, 760, 500, 200, "מה קקקקק", 14, 1, -1, 5);
                         }
-                     
+
                     }
                 }
             }
@@ -617,7 +638,7 @@
                     controllerAs: '$ctrl',
                     resolve: {
                         portfoliowords: function (usersService, $stateParams) {
-                            return usersService.getAllPortfliositemsForWords($stateParams.id,2);
+                            return usersService.getAllPortfliositemsForWords($stateParams.id, 2);
                         },
 
                         protname: function (usersService, $stateParams) {
@@ -662,7 +683,7 @@
         //            controllerAs: '$ctrl',
         //            resolve: {
         //                user: function (usersService, $stateParams) {
-                            
+
         //                   return usersService.getUser($stateParams.id,true);
         //                },
         //                lessons: function (lessonsService, $stateParams) {
@@ -679,7 +700,7 @@
         //                },
         //                //*********************
         //                payments: function (usersService, $stateParams) {
-                          
+
         //                    return usersService.getPaymentsByUserId($stateParams.id);
         //                },
         //                files: function (usersService, $stateParams) {
@@ -694,16 +715,16 @@
         //                userhorses: function (usersService, $stateParams) {
         //                    return usersService.getUserUserhorsesByUserId($stateParams.id);
         //                },
-                      
+
         //                students: function (usersService) {
         //                     return usersService.getUsers('student');
         //                },
 
         //                makav: function (usersService, $stateParams) {
-                           
+
         //                    return usersService.getUserUserMakavByUserId($stateParams.id);
         //                },
-                       
+
 
 
         //            }
@@ -713,34 +734,34 @@
 
     });
 
-    
+
     app.filter('orderByDateDesc', function () {
-      
+
         return function (items) {
             if (items) {
-             
+
                 items.sort(function (a, b) {
-                   
+
                     if (new Date(a.Date) > new Date(b.Date)) {
                         return -1;
                     }
                     else if (new Date(a.Date) < new Date(b.Date)) {
                         return 1;
                     }
-                   
+
                     else {
-                        
+
                         return 0;
                     }
                 });
 
-               
+
                 return items;
             }
         }
     });
 
-   
+
 
     app.config(function ($httpProvider) {
         $httpProvider.interceptors.push('authInterceptorService');
@@ -748,13 +769,13 @@
 
     app.run(function ($rootScope, $http, sharedValues) {
 
-     
-      
+
+
         //document.addEventListener("dragstart", onOnline, false);
         //document.addEventListener("drop", onOffline, false);
 
         //function onOnline(event) {
-         
+
         //    $rootScope.$apply(function () {
         //        $rootScope.noNetwork = event;
         //        $rootScope.studentIdDrag = event.target.id;
@@ -763,7 +784,7 @@
 
 
         //function onOffline(event) {
-           
+
         //    $rootScope.$apply(function () {
         //        $rootScope.noNetwork = event;
         //    });
@@ -772,9 +793,9 @@
         $rootScope.role = localStorage.getItem('currentRole');
         $rootScope.FarmInstractorPolicy = localStorage.getItem('FarmInstractorPolicy');
 
-        
 
-        $rootScope.IsInstructorBlock = ($rootScope.role == "instructor" && $rootScope.FarmInstractorPolicy=="true")?true:false;
+
+        $rootScope.IsInstructorBlock = ($rootScope.role == "instructor" && $rootScope.FarmInstractorPolicy == "true") ? true : false;
 
         $rootScope.isPhone = false;
 
@@ -791,56 +812,56 @@
         var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
         // צחי שינה כדי שיעבוד ללא הפיירבס 
-     //  if (!iOS) {
-     ////  if (iOS) {
-     //       // Initialize Firebase
-     //       var config = {
-     //           apiKey: "AIzaSyAGKOIfx7E5O_9JqUju_-AmjEM-4w20hw0",
-     //           authDomain: "test-ba446.firebaseapp.com",
-     //           databaseURL: "https://test-ba446.firebaseio.com",
-     //           storageBucket: "test-ba446.appspot.com",
-     //           messagingSenderId: "386031058381"
-     //       };
-     //       firebase.initializeApp(config);
+        //  if (!iOS) {
+        ////  if (iOS) {
+        //       // Initialize Firebase
+        //       var config = {
+        //           apiKey: "AIzaSyAGKOIfx7E5O_9JqUju_-AmjEM-4w20hw0",
+        //           authDomain: "test-ba446.firebaseapp.com",
+        //           databaseURL: "https://test-ba446.firebaseio.com",
+        //           storageBucket: "test-ba446.appspot.com",
+        //           messagingSenderId: "386031058381"
+        //       };
+        //       firebase.initializeApp(config);
 
-     //       const messaging = firebase.messaging();
-     //       messaging.requestPermission()
-     //           .then(function () {
-     //               console.log('Notification permission granted.');
-     //               return messaging.getToken();
-     //           })
-     //           .then(function (token) {
-     //               $rootScope.$broadcast('fcmToken', token);
-     //           })
-     //           .catch(function (err) {
-                    
-     //               console.log('Unable to get permission to notify.', err);
-     //           });
+        //       const messaging = firebase.messaging();
+        //       messaging.requestPermission()
+        //           .then(function () {
+        //               console.log('Notification permission granted.');
+        //               return messaging.getToken();
+        //           })
+        //           .then(function (token) {
+        //               $rootScope.$broadcast('fcmToken', token);
+        //           })
+        //           .catch(function (err) {
 
-     //       messaging.onMessage(function (payload) {
-     //           $rootScope.$broadcast('fcmMessage', payload);
-     //       });
+        //               console.log('Unable to get permission to notify.', err);
+        //           });
 
-     //       messaging.onTokenRefresh(function () {
-     //           messaging.getToken()
-     //               .then(function (refreshedToken) {
-     //                   $rootScope.$broadcast('fcmToken', refreshedToken);
-     //               })
-     //               .catch(function (err) {
-     //                   console.log('Unable to retrieve refreshed token ', err);
-     //               });
-     //       });
+        //       messaging.onMessage(function (payload) {
+        //           $rootScope.$broadcast('fcmMessage', payload);
+        //       });
 
-     //       $rootScope.$on('fcmToken', function (event, token) {
-     //           $http.post(sharedValues.apiUrl + 'notifications/register/', '"' + token + '"').then(function () {
-     //               localStorage.setItem('deviceToken', token);
-     //           });
-     //       });
+        //       messaging.onTokenRefresh(function () {
+        //           messaging.getToken()
+        //               .then(function (refreshedToken) {
+        //                   $rootScope.$broadcast('fcmToken', refreshedToken);
+        //               })
+        //               .catch(function (err) {
+        //                   console.log('Unable to retrieve refreshed token ', err);
+        //               });
+        //       });
 
-     //       $rootScope.$on('fcmMessage', function (event, payload) {
-     //           alert(payload.notification.body);
-     //       });
-     //   }
+        //       $rootScope.$on('fcmToken', function (event, token) {
+        //           $http.post(sharedValues.apiUrl + 'notifications/register/', '"' + token + '"').then(function () {
+        //               localStorage.setItem('deviceToken', token);
+        //           });
+        //       });
+
+        //       $rootScope.$on('fcmMessage', function (event, payload) {
+        //           alert(payload.notification.body);
+        //       });
+        //   }
 
         //$rootScope.$on("$stateChangeError", console.log.bind(console));
         //$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
@@ -862,7 +883,7 @@
         //$rootScope.$on('$viewContentLoaded', function (event) {
         //    console.log('$viewContentLoaded - fired after dom rendered', event);
         //    notificationsService.getNotifications().then(function (data) {
-              
+
         //        $rootScope.$broadcast('notificationsNav.refresh', data.length)
         //    });
         //});
@@ -931,17 +952,17 @@
 
                     scope.onResize = function () {
 
-                       
+
                         var canvas = element.find('canvas')[0];
 
-                       // canvas.font = "120px Arial";
+                        // canvas.font = "120px Arial";
                         var ratio = Math.max($window.devicePixelRatio || 1, 1);
 
                         canvas.width = canvas.offsetWidth * ratio;
                         canvas.height = canvas.offsetHeight * ratio;
                         canvas.getContext('2d').scale(ratio, ratio);
 
-                     //   canvas.getContext('2d').font = "120px Arial";
+                        //   canvas.getContext('2d').font = "120px Arial";
 
 
 

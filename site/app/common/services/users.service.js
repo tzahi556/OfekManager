@@ -39,7 +39,10 @@
         this.getFiles = _getFiles;
         this.getWorkerChilds = _getWorkerChilds;
         this.bindData = _bindData;
+        this.getMasterTable = _getMasterTable;
+
         
+
         function _getFiles(workerid) {
 
 
@@ -54,7 +57,26 @@
             return deferred.promise;
         }
 
+
+        function _getMasterTable(type) {
+
+
+            var deferred = $q.defer();
+
+            $http.get(sharedValues.apiUrl + 'users/getMasterTable/' + type).then(function (res) {
+
+                var res = res.data;
+                deferred.resolve(res);
+
+            });
+            return deferred.promise;
+        }
+
         //************************** Worker ****************
+
+
+
+
         function _getWorkers() {
             
            

@@ -373,6 +373,12 @@ namespace FarmsApi.Services
 
                 if (CurrentRole == "instructor")
                 {
+                    var WorkersListToRemove = Context.Workers.Where(x => x.UserId == CurrentUserId && (string.IsNullOrEmpty(x.FirstName) && string.IsNullOrEmpty(x.LastName) && string.IsNullOrEmpty(x.Taz))).ToList();
+
+                    Context.Workers.RemoveRange(WorkersListToRemove);
+                    Context.SaveChanges();
+
+
                     var WorkersList = Context.Workers.Where(x => x.UserId == CurrentUserId).ToList();
 
                     return WorkersList;
@@ -485,6 +491,8 @@ namespace FarmsApi.Services
                 try
                 {
 
+                    var CurrentUser = GetCurrentUser();
+                    
                     string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
 
 
@@ -492,12 +500,16 @@ namespace FarmsApi.Services
                     client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
                     client.EnableSsl = false;
 
-                    string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div></html>";
-                    
+                    string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
+
+                    Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
+
+                    string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
+
                     MailMessage actMSG = new MailMessage(
                                             "office@ofekmanage.com",
                                              MailTo,
-                                            "עובדת חדשה - אופק",
+                                            Title,
                                              Body);
                     
                     
@@ -707,6 +719,30 @@ namespace FarmsApi.Services
             {
 
                 return Context.Cities.ToList();
+
+            }
+        }
+
+        public static List<Banks> GetBanksList()
+        {
+
+
+            using (var Context = new Context())
+            {
+
+                return Context.Banks.ToList();
+
+            }
+        }
+
+        public static List<BanksBrunchs> GetBanksBrunchsList()
+        {
+
+
+            using (var Context = new Context())
+            {
+
+                return Context.BanksBrunchs.ToList();
 
             }
         }

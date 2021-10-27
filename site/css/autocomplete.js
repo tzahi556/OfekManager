@@ -31,8 +31,13 @@
                 b.innerHTML += "<input type='hidden' value='" + arr[i].Name.trim() + "'>";
                 /*execute a function when someone clicks on the item value (DIV element):*/
                 b.addEventListener("click", function (e) {
+                   
+
                     /*insert the value for the autocomplete text field:*/
                     inp.value = this.getElementsByTagName("input")[0].value;
+
+                    $(inp).change();
+
                     /*close the list of autocompleted values,
                     (or any other open lists of autocompleted values:*/
                     closeAllLists();
@@ -58,15 +63,17 @@
             /*and and make the current item more visible:*/
             addActive(x);
         } else if (e.keyCode == 13) {
+          
             /*If the ENTER key is pressed, prevent the form from being submitted,*/
             e.preventDefault();
             if (currentFocus > -1) {
                 /*and simulate a click on the "active" item:*/
-                if (x) x[currentFocus].click();
+                if (x) { x[currentFocus].click();};
             }
         }
     });
     function addActive(x) {
+      
         /*a function to classify an item as "active":*/
         if (!x) return false;
         /*start by removing the "active" class on all items:*/

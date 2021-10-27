@@ -34,11 +34,11 @@
                                 </div>
                                 <table class="table">
                                     <tbody>
-                                        <tr ng-repeat="file in $ctrl.tazfiles">
+                                        <tr ng-repeat="file in $ctrl.sendfiles">
                                             <td>
-                                                <a ng-href="{{$ctrl.uploadsUri+ '/' + file.FileName}}" target="_blank"><span style="width:20px;overflow:hidden">{{file.FileName}}</span></a>
+                                                {{file.name}}
                                             </td>
-                                            <td><div class="btn btn-xs btn-default" ng-click="$ctrl.removeFile(file.FileName,1)">הסר/י</div></td>
+                                            <td><div class="btn btn-xs btn-default" ng-click="$ctrl.removeFile(file.name,1)">הסר/י</div></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -71,7 +71,7 @@
 
 
                     <div class="col-md-12" style="text-align:left">
-                        <div class="btn  btn-info" ng-click="$ctrl.saveWorker(2)">שלח טפסים</div>
+                        <div class="btn  btn-info" ng-click="$ctrl.sendForms()">שלח טפסים</div>
                     </div>
 
 

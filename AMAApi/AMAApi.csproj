@@ -188,6 +188,8 @@
   <ItemGroup>
     <Compile Include="Controllers\FilesController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="DataModels\Banks.cs" />
+    <Compile Include="DataModels\BanksBrunchs.cs" />
     <Compile Include="DataModels\WorkerChilds.cs" />
     <Compile Include="DataModels\Files.cs" />
     <Compile Include="DataModels\TestPdf.cs" />

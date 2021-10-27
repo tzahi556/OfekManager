@@ -6,6 +6,7 @@
 
     function FilesService($q, $http, sharedValues) {
         this.upload = _upload.bind(this);
+        this.uploadAfterPost = _uploadAfterPost.bind(this);
         this.delete = _delete.bind(this);
 
         function _upload(file,folder,workerid) {
@@ -29,6 +30,32 @@
                 alert('לא ניתן לעלות תמונה, אין גישה לרשת');
                 deferred.reject();
             });
+            return deferred.promise;
+        }
+
+        function _uploadAfterPost(file, folder, workerid,text) {
+
+
+            var deferred = $q.defer();
+            var fd = new FormData();
+
+            for (var i = 0; i < file.length; i++) {
+                fd.append('file', file[i]);
+            }
+
+           
+
+            $http.post(sharedValues.apiUrl + 'files/uploadformail/' + folder + '/' + workerid + '/' + text, fd, {
+                transformRequest: angular.identity,
+                headers: { 'Content-Type': undefined }
+            }).then(
+                function (data) {
+                    deferred.resolve(data.data);
+                },
+                function () {
+                    alert('לא ניתן לעלות תמונה, אין גישה לרשת');
+                    deferred.reject();
+                });
             return deferred.promise;
         }
 
@@ -65,26 +92,28 @@
     app.directive("filenamenotupload", ['filesService', function (filesService) {
         return {
             scope: {
-                filename: "=",
+                filenamenotupload: "=",
                 filenameCallback: "=",
                 workerid: "=",
                 folder: "="
+               
             },
             link: function (scope, element, attributes) {
                 element.bind("change", function (changeEvent) {
 
                     if (changeEvent.target.files.length > 0) {
-                            if (scope.filenameCallback) {
-                                scope.filenameCallback(changeEvent.target.files);
-                            }
                      
-                        //filesService.upload(changeEvent.target.files, scope.folder, scope.workerid).then(function (data) {
+                            //if (scope.filenameCallback) {
+                            //    scope.filenameCallback(changeEvent);
+                            //}
+                     
+                        filesService.uploadAfterPost(changeEvent.target.files, scope.folder, scope.workerid,"ss").then(function (data) {
 
-                        //    //scope.filename = data;
-                        //    if (scope.filenameCallback) {
-                        //        scope.filenameCallback(data);
-                        //    }
-                        //});
+                            //scope.filename = data;
+                            if (scope.filenameCallback) {
+                                scope.filenameCallback(changeEvent);
+                            }
+                        });
                     }
                 });
             },

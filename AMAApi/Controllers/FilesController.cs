@@ -1,6 +1,10 @@
-﻿using System.IO;
+﻿using FarmsApi.Services;
+using System;
+using System.Configuration;
+using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
@@ -15,6 +19,9 @@ namespace FarmsApi.Controllers
         [HttpPost]
         public async Task<IHttpActionResult> Upload(string folder, int workerid)
         {
+
+
+
             if (!Request.Content.IsMimeMultipartContent())
                 throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
 
@@ -64,6 +71,101 @@ namespace FarmsApi.Controllers
 
             return Ok(fileList);
         }
+
+
+        [Route("uploadformail/{folder}/{workerid}/{text}")]
+        [HttpPost]
+        public async Task<IHttpActionResult> UploadForMail(string folder, int workerid, string text)
+        {
+
+            if (folder == "send") return Ok("true");
+
+
+            if (!Request.Content.IsMimeMultipartContent())
+                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+
+            string root = HttpContext.Current.Server.MapPath("~/Uploads/");
+
+            string WorkerPath = root + workerid.ToString();
+
+            if (!Directory.Exists(WorkerPath))
+            {
+                Directory.CreateDirectory(WorkerPath);
+
+            }
+
+            root = WorkerPath;
+
+            var provider = new MultipartFormDataStreamProvider(root);
+
+            var file = await Request.Content.ReadAsMultipartAsync(provider);
+
+
+            string fileList = "";
+         
+
+            try
+            {
+
+                var CurrentUser = UsersService.GetCurrentUser();
+
+                string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
+
+
+                SmtpClient client = new SmtpClient("82.166.0.201", 25);
+                client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
+                client.EnableSsl = false;
+
+                string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קבצים חדשים.</div><br/>";// </html>";
+
+                Body += text + "</html>";
+
+                string Title = "הודעה חדשה - " +CurrentUser.FirstName + " " + CurrentUser.LastName;
+
+                MailMessage actMSG = new MailMessage(
+                                        "office@ofekmanage.com",
+                                         MailTo,
+                                        Title,
+                                         Body);
+
+
+                actMSG.IsBodyHtml = true;
+                for (int i = 0; i < file.FileData.Count; i++)
+                {
+                    FileStream fStream = new FileStream(file.FileData[i].LocalFileName, FileMode.Open);
+                  
+                    Attachment attachment = new Attachment(fStream, file.FileData[i].Headers.ContentDisposition.FileName.Replace("\"", ""), file.FileData[i].Headers.ContentType.MediaType);
+
+                    actMSG.Attachments.Add(attachment);
+
+                   // fStream.Close();
+
+                }
+                client.Send(actMSG);
+
+               
+
+
+            }
+            catch (Exception ex)
+            {
+                return Ok("false");
+            }
+            finally
+            {
+               
+
+            }
+
+
+
+
+
+            return Ok(fileList);
+        }
+
+
+
 
         public string filterFilename(string filename)
         {

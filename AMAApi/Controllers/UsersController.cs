@@ -181,13 +181,33 @@ namespace FarmsApi.Services
         //******************************************** End Workers *****************************
         //******************************************** Master Table *****************************
         [Authorize]
-        [Route("getCitiesList")]
+        [Route("getMasterTable/{type}")]
         [HttpGet]
-        public IHttpActionResult getCitiesList()
+        public IHttpActionResult GetMasterTable(int type)
         {
-            return Ok(UsersService.GetCitiesList());
+
+            switch (type)
+            {
+                case 1:
+                    return Ok(UsersService.GetCitiesList());
+
+                case 2:
+                    return Ok(UsersService.GetBanksList());
+                case 3:
+                    return Ok(UsersService.GetBanksBrunchsList());
+
+
+                default:
+                    return null;
+            }
+
+            
         }
 
+
+
+
+        
 
         //******************************************** End Master Table *****************************
     }

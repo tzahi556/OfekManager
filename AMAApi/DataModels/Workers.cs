@@ -142,6 +142,12 @@ namespace FarmsApi.DataModels
 
         public string ImgData { get; set; }
 
+        public string BankNumName { get; set; }
+        public string BrunchNumName { get; set; }
+        public string BankAccountNumber { get; set; }
+        public string Comments { get; set; }
+      
+
 
         public object this[string propertyName]
         {

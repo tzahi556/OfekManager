@@ -19,6 +19,10 @@
             width: 100%;
         }
 
+    .date {
+      direction:ltr;text-align:right;
+    }
+
 </style>
 <!--<div id="loader"></div>-->
 
@@ -111,7 +115,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>שם פרטי</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.FirstName" required />
+                            <input type="text"  class="form-control" ng-model="$ctrl.worker.FirstName" ng-change="$ctrl.worker.HeskemWorkerName=$ctrl.worker.FirstName + ' ' + $ctrl.worker.LastName" required />
                             <label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>
@@ -121,7 +125,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>שם משפחה</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.LastName"  required/>
+                            <input type="text"  class="form-control" ng-model="$ctrl.worker.LastName" ng-change="$ctrl.worker.HeskemWorkerName= $ctrl.worker.FirstName +' ' + $ctrl.worker.LastName"  required/>
                             <label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>
@@ -131,7 +135,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תעודת זהות</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.Taz"  required/>
+                            <input type="text"  class="form-control" ng-model="$ctrl.worker.Taz" ng-change="$ctrl.worker.HeskemWorkerTaz=$ctrl.worker.Taz"  required/>
                             <label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>
@@ -175,7 +179,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך לידה</label>
-                            <input type="date"  class="form-control" ng-model="$ctrl.worker.BirthDate"  required/>
+                            <input type="text"  class="form-control date" ng-model="$ctrl.worker.BirthDate"   required/>
 
                         </div>
 
@@ -183,7 +187,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך עליה</label>
-                            <input type="date" name="LastName" class="form-control" ng-model="$ctrl.worker.AliaDate"  />
+                            <input type="text" name="LastName" class="form-control date" ng-model="$ctrl.worker.AliaDate"  />
 
                         </div>
 
@@ -191,7 +195,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מס' טלפון נייד</label>
-                            <input type="text" name="Taz" class="form-control" ng-model="$ctrl.worker.PhoneSelular"  required/>
+                            <input type="text" name="Taz" class="form-control" ng-model="$ctrl.worker.PhoneSelular" ng-change="$ctrl.worker.HeskemWorkerPhone= $ctrl.worker.PhoneSelular"  required/>
 
                         </div>
 
@@ -225,7 +229,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>רחוב</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.Street"  required/>
+                            <input type="text"  class="form-control" ng-model="$ctrl.worker.Street" ng-change="$ctrl.worker.HeskemWorkerStreet= $ctrl.worker.Street + ' ' + $ctrl.worker.HouseNumber"  required/>
 
                         </div>
 
@@ -233,7 +237,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מס' בית</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HouseNumber" required />
+                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HouseNumber" ng-change="$ctrl.worker.HeskemWorkerStreet= $ctrl.worker.Street + ' ' + $ctrl.worker.HouseNumber" required />
 
                         </div>
 
@@ -463,7 +467,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>תאריך לידה</label>
-                            <input type="date"  class="form-control" ng-model="$ctrl.newChild.BirthDate"  />
+                            <input type="text"  class="form-control date" ng-model="$ctrl.newChild.BirthDate"  />
                         </div>
 
                     </div>
@@ -531,7 +535,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך תחילת העבודה בשנת המס</label>
-                            <input type="date"  class="form-control"  ng-model="$ctrl.worker.StartWorkDate"   required/>
+                            <input type="text"  class="form-control date"  ng-model="$ctrl.worker.StartWorkDate"   required/>
                         </div>
 
                     </div>
@@ -581,7 +585,7 @@
                                 <option value="3">משכורת נוספת</option>
                                 <option value="4">קצבה</option>
                                 <option value="5">משכורת חלקית</option>
-                                <option value="6">מלגה</option>
+                                <!--<option value="6">מלגה</option>-->
                                 <option value="7">מקור אחר</option>
 
                             </select>
@@ -712,14 +716,14 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך לידה</label>
-                            <input type="date"  class="form-control" ng-model="$ctrl.worker.ZoogBirthDate"  />
+                            <input type="text"  class="form-control date" ng-model="$ctrl.worker.ZoogBirthDate"  />
                         </div>
 
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך עליה</label>
-                            <input type="date"  class="form-control" ng-model="$ctrl.worker.ZoogAliaDate"  />
+                            <input type="text"  class="form-control date" ng-model="$ctrl.worker.ZoogAliaDate"  />
                         </div>
 
                     </div>
@@ -877,7 +881,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>מתאריך</label>
-                                    <input type="date" class="form-control" ng-model="$ctrl.worker.ZikuyYeshuvStartDate" />
+                                    <input type="text" class="form-control date" ng-model="$ctrl.worker.ZikuyYeshuvStartDate" />
 
                                 </div>
 
@@ -934,7 +938,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label>מתאריך</label>
-                                    <input type="date" class="form-control" ng-model="$ctrl.worker.ZikuyOleHadashDate" />
+                                    <input type="text" class="form-control date" ng-model="$ctrl.worker.ZikuyOleHadashDate" />
 
                                 </div>
 
@@ -961,7 +965,7 @@
                             <div class="col-md-7">
                                 <div class="form-group">
                                     <label>לא הייתה לי הכנסה בישראל מתחילת שנת המס הנוכחית עד תאריך</label>
-                                    <input type="date" class="form-control" ng-model="$ctrl.worker.ZikuyOleHadashFromStartYearDate" />
+                                    <input type="text" class="form-control date" ng-model="$ctrl.worker.ZikuyOleHadashFromStartYearDate" />
                                     <label class="tp-help-below">
                                         מי שתקופת זכאותו (42 חודש) אינה רצופה בשל שירות חובה בצה"ל, לימודים על תיכוניים או יציאה לחו"ל יפנה לפקיד השומה.
                                     </label>
@@ -1340,7 +1344,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>תאריך תחילת שירות</label>
-                                    <input type="date" class="form-control" ng-model="$ctrl.worker.ZikuyHayalEndStartDate" />
+                                    <input type="text" class="form-control date" ng-model="$ctrl.worker.ZikuyHayalEndStartDate" />
 
                                 </div>
 
@@ -1348,7 +1352,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label>תאריך סיום שירות</label>
-                                    <input type="date" class="form-control" ng-model="$ctrl.worker.ZikuyHayalEndEndDate" />
+                                    <input type="text" class="form-control date" ng-model="$ctrl.worker.ZikuyHayalEndEndDate" />
 
                                 </div>
 
@@ -1735,20 +1739,20 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>  ביום</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemYom"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemYom" />
                         </div>
 
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>חודש</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemHodesh"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemHodesh" />
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>שנה</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemShana"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemShana" />
                         </div>
 
                     </div>
@@ -1765,20 +1769,20 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label> שם עובדת</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemWorkerName"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemWorkerName" />
                         </div>
 
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>ת"ז </label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemWorkerTaz"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemWorkerTaz" />
                         </div>
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>רחוב</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemWorkerStreet"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemWorkerStreet" />
                         </div>
 
                     </div>
@@ -1786,14 +1790,14 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>עיר</label>
-                            <input type="text"  class="form-control" ng-disabled="true" ng-model="$ctrl.worker.City" />
+                            <input type="text" class="form-control" ng-disabled="true" ng-model="$ctrl.worker.City" />
                         </div>
 
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>טלפון</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemWorkerPhone"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemWorkerPhone" />
                         </div>
 
                     </div>
@@ -1808,7 +1812,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label> תפקיד</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemTafkid"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemTafkid" />
                         </div>
 
                     </div>
@@ -1816,7 +1820,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>תחת סמכות (רכזת צהרנים)</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemSamkut"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemSamkut" />
                         </div>
 
                     </div>
@@ -1824,14 +1828,14 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>מועד התחלת העסקה</label>
-                            <input type="date"  class="form-control" ng-model="$ctrl.worker.HeskemStartDate"  />
+                            <input type="date" class="form-control" ng-model="$ctrl.worker.HeskemStartDate" />
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>ימים א-ה משעה</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemStartHour"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemStartHour" />
                         </div>
 
                     </div>
@@ -1840,7 +1844,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <label>עד שעה</label>
-                            <input type="text"  class="form-control" ng-model="$ctrl.worker.HeskemEndHour"  />
+                            <input type="text" class="form-control" ng-model="$ctrl.worker.HeskemEndHour" />
                         </div>
 
                     </div>
@@ -1892,7 +1896,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
 
-                                            <input type="text"  class="form-control" placeholder="פירוט מגבלות רפואיות" ng-model="$ctrl.worker.HeskemWorkerMigbalot"  />
+                                            <input type="text" class="form-control" placeholder="פירוט מגבלות רפואיות" ng-model="$ctrl.worker.HeskemWorkerMigbalot" />
                                         </div>
                                     </div>
 
@@ -1915,7 +1919,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
 
-                                            <input type="text"  class="form-control" placeholder="פירוט התרופות" ng-model="$ctrl.worker.HeskemWorkerTrufot"  />
+                                            <input type="text" class="form-control" placeholder="פירוט התרופות" ng-model="$ctrl.worker.HeskemWorkerTrufot" />
                                         </div>
                                     </div>
                                 </div>
@@ -1937,7 +1941,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
 
-                                            <input type="text"  class="form-control" placeholder="פירוט רגישויות" ng-model="$ctrl.worker.HeskemWorkerRgishut"  />
+                                            <input type="text" class="form-control" placeholder="פירוט רגישויות" ng-model="$ctrl.worker.HeskemWorkerRgishut" />
                                         </div>
                                     </div>
                                 </div>
@@ -1960,7 +1964,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
 
-                                            <input type="text"  class="form-control" placeholder="פירוט מחלות כרוניות" ng-model="$ctrl.worker.HeskemWorkerCronit"  />
+                                            <input type="text" class="form-control" placeholder="פירוט מחלות כרוניות" ng-model="$ctrl.worker.HeskemWorkerCronit" />
                                         </div>
                                     </div>
                                 </div>
@@ -1986,10 +1990,9 @@
 
                         <div class="col-md-12">
 
-
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>3 חודשים ראשונים , שכר שעתי</label>
+                                    <label> שכר שעתי</label>
                                     <input type="number" class="form-control" ng-model="$ctrl.worker.HeskemWorkerMaskuert3" />
                                 </div>
 
@@ -1997,29 +2000,107 @@
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>מחודש רביעי , שכר גלובלי</label>
+                                    <label> שכר גלובלי</label>
                                     <input type="number" class="form-control" ng-model="$ctrl.worker.HeskemWorkerMaskuert4" />
+                                </div>
+
+                            </div>
+
+                            <!--<div class="col-md-4">
+                    <div class="form-group">
+                        <label>התעסקות בשעות הבוקר</label>
+                        <input type="number" class="form-control" ng-model="$ctrl.worker.HeskemWorkerMaskuert5" />
+                    </div>
+
+                </div>-->
+
+
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-12 alert-info">
+                        <label>פרטי הבנק</label>
+                    </div>
+
+
+                    <div class="row">
+
+
+
+                        <div class="col-md-12">
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label> מספר ושם הבנק</label>
+                                    <input id="txtBanks" class="form-control autocomplete" type="text" autocomplete="off" ng-change="$ctrl.changeBank()"  ng-model="$ctrl.worker.BankNumName" />
                                 </div>
 
                             </div>
 
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label>התעסקות בשעות הבוקר</label>
-                                    <input type="number" class="form-control" ng-model="$ctrl.worker.HeskemWorkerMaskuert5" />
+                                    <label> מספר ושם סניף</label>
+                                    <input id="txtBanksBrunchs" class="form-control autocomplete" type="text" autocomplete="off"  ng-model="$ctrl.worker.BrunchNumName" />
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label> מספר חשבון</label>
+                                    <input type="text" class="form-control" ng-model="$ctrl.worker.BankAccountNumber" />
                                 </div>
 
                             </div>
 
 
-
-
                         </div>
-                        </div>
-
-
-
                     </div>
+
+
+
+                </div>
+
+
+                <div class="row">
+
+                    <div class="col-md-12 alert-info">
+                        <label>הערות</label>
+                    </div>
+
+
+                    <div class="row">
+
+
+
+                        <div class="col-md-12">
+
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label>הערות</label>
+                                    <textarea type="text" class="form-control" rows="4" ng-model="$ctrl.worker.Comments" ></textarea>
+                                </div>
+
+                            </div>
+
+                           
+
+
+                        </div>
+                    </div>
+
+
+
+                </div>
+
             </div>
 
         </div>
