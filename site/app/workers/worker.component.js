@@ -73,7 +73,11 @@
 
             Object.keys(obj).forEach(function (key, index) {
 
-                if (key.indexOf("Date") != -1 && obj[key]) {
+              
+
+                if (key.indexOf("Date") != -1 && obj[key] && key != "DateRigster" ) {
+
+                   
 
                     obj[key] = moment(obj[key]).format("DD/MM/YYYY");// .startOf('day').toDate();
 
@@ -550,7 +554,7 @@
 
             Object.keys(obj).forEach(function (key, index) {
 
-                if (key.indexOf("Date") != -1 && obj[key]) {
+                if (key.indexOf("Date") != -1 && obj[key] && key != "DateRigster") {
                    
                     obj[key] = changeDateFormat(obj[key]);
                     //  obj[key].setHours((obj[key]).getHours() + 3);

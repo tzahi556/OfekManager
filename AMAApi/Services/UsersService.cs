@@ -397,13 +397,13 @@ namespace FarmsApi.Services
                     Context.SaveChanges();
 
 
-                    var WorkersList = Context.Workers.Where(x => x.UserId == CurrentUserId).ToList();
+                    var WorkersList = Context.Workers.Where(x => x.UserId == CurrentUserId).OrderByDescending(x=>x.DateRigster).ToList();
 
                     return WorkersList;
                 }
                 else
                 {
-                    return Context.Workers.ToList();
+                    return Context.Workers.Where(x=>!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim())).OrderByDescending(x => x.DateRigster).ToList();
 
                 }
 

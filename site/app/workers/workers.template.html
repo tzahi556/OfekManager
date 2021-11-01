@@ -34,7 +34,7 @@
                     <td>{{worker.FirstName}}</td>
                     <td>{{worker.LastName}}</td>
                     <td>{{worker.Email}}</td>
-                    <td>{{worker.DateRigster | ildate: 'DD/MM/YYYY HH:mm'}}</td>
+                    <td>{{worker.DateRigster | ildate: 'HH:mm DD/MM/YYYY '}}</td>
                     <td>{{worker.Status}}</td>
                     <td><a class="btn  btn-success" ng-href="{{$ctrl.uploadsUri + worker.Id + '/OfekAllPdf.pdf'}}" target="_blank">PDF</a></td>
                     <td> <button class="btn  btn-warning" ui-sref="worker({id:worker.Id})">עדכון</button></td>
