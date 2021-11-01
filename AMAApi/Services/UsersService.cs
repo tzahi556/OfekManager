@@ -375,7 +375,25 @@ namespace FarmsApi.Services
                 {
                     var WorkersListToRemove = Context.Workers.Where(x => x.UserId == CurrentUserId && (string.IsNullOrEmpty(x.FirstName) && string.IsNullOrEmpty(x.LastName) && string.IsNullOrEmpty(x.Taz))).ToList();
 
-                    Context.Workers.RemoveRange(WorkersListToRemove);
+                    //  Context.Workers.RemoveRange(WorkersListToRemove);
+
+                    foreach (var item in WorkersListToRemove)
+                    {
+                       
+
+                        DeleteDirectory(item.Id.ToString());
+
+                        Context.Workers.Remove(item);
+
+
+
+
+                    }
+
+                   
+                    
+                    
+                    
                     Context.SaveChanges();
 
 
@@ -392,10 +410,26 @@ namespace FarmsApi.Services
             }
         }
 
+        private static void DeleteDirectory(string Id)
+        {
+            var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" +Id);
+            if (Directory.Exists(BaseLinkSite))
+            {
+                DirectoryInfo di = new DirectoryInfo(BaseLinkSite);
+
+                foreach (FileInfo file in di.GetFiles())
+                {
+                    file.Delete();
+                }
+                //foreach (DirectoryInfo dir in di.GetDirectories())
+                //{
+                    di.Delete(true);
+               // }
 
 
+            }
+        }
 
-      
         public static Workers GetWorker(int id)
         {
 
@@ -445,6 +479,10 @@ namespace FarmsApi.Services
                 Context.Workers.Remove(Worker);
 
                 Context.SaveChanges();
+
+
+                DeleteDirectory(Id.ToString());
+
 
                 return GetWorkers();
             }

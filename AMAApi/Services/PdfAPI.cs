@@ -311,8 +311,11 @@ namespace FarmsApi.Services
                 {
                     string[] resSplit = res.ToString().Split('-');
 
-                    item.Word = resSplit[1].Trim();
-                    tp.Add(item);
+                    if (resSplit.Length > 1)
+                        item.Word = resSplit[1].Trim();
+                    else
+                        item.Word = "";
+                   tp.Add(item);
 
                 }
 
