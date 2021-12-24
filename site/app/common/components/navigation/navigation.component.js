@@ -38,6 +38,8 @@
 
             this.docs = ['sysAdmin', 'farmAdmin', 'instructor'].indexOf(role) != -1 ? true : false;
 
+            this.workersnew = ['sysAdmin', 'farmAdmin', 'instructor'].indexOf(role) != -1 ? true : false;
+
 
             //this.awsauto = ['sysAdmin', 'awsAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;
             //this.awsmangershistory = ['sysAdmin', 'awsAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;

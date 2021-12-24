@@ -20,8 +20,10 @@ namespace FarmsApi.DataModels
         public int Farm_Id { get; set; }
         public bool Deleted { get; set; }
 
+        public string AreaId { get; set; }
 
-       
+
+
 
     }
 }

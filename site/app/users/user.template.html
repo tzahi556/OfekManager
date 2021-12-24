@@ -32,15 +32,22 @@
             <div class="form-group">
                 <label>תפקיד</label>
                 <select class="form-control" ng-options="role.id as role.name for role in $ctrl.roles | filter:{showInUsers:true} " ng-model="$ctrl.user.Role" required>
-                    <option value="">בחר תפקיד</option>
+                    <option value="">בחרי תפקיד</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>אזור עובדת</label>
+                <select class="form-control" ng-options="area.id as area.name for area in $ctrl.areas" ng-model="$ctrl.user.AreaId" required>
+                    <option value="">בחרי אזור</option>
                 </select>
             </div>
             <!--<div class="form-group" ng-if="$ctrl.role=='sysAdmin'">
-                <label>חווה</label>
-                <select class="form-control" ng-options="farm.Id as farm.Name for farm in $ctrl.farms" ng-model="$ctrl.user.Farm_Id" required>
-                    <option value="">בחר חווה</option>
-                </select>
-            </div>-->
+        <label>חווה</label>
+        <select class="form-control" ng-options="farm.Id as farm.Name for farm in $ctrl.farms" ng-model="$ctrl.user.Farm_Id" required>
+            <option value="">בחר חווה</option>
+        </select>
+    </div>-->
         </div>
         <div class="panel-footer">
             <button type="submit" class="btn btn-success" ng-disabled="userForm.$invalid">עדכון</button>

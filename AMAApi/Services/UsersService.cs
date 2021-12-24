@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -351,10 +353,10 @@ namespace FarmsApi.Services
             }
         }
 
-        public static List<Workers> GetWorkers()
+        public static List<Workers> GetWorkers(bool isnew)
         {
-
-
+          
+            
             using (var Context = new Context())
             {
 
@@ -373,13 +375,13 @@ namespace FarmsApi.Services
 
                 if (CurrentRole == "instructor")
                 {
-                    var WorkersListToRemove = Context.Workers.Where(x => x.UserId == CurrentUserId && (string.IsNullOrEmpty(x.FirstName) && string.IsNullOrEmpty(x.LastName) && string.IsNullOrEmpty(x.Taz))).ToList();
+                    var WorkersListToRemove = Context.Workers.Where(x => x.IsNew == isnew && x.UserId == CurrentUserId && (string.IsNullOrEmpty(x.FirstName) && string.IsNullOrEmpty(x.LastName) && string.IsNullOrEmpty(x.Taz))).ToList();
 
                     //  Context.Workers.RemoveRange(WorkersListToRemove);
 
                     foreach (var item in WorkersListToRemove)
                     {
-                       
+
 
                         DeleteDirectory(item.Id.ToString());
 
@@ -390,20 +392,20 @@ namespace FarmsApi.Services
 
                     }
 
-                   
-                    
-                    
-                    
+
+
+
+
                     Context.SaveChanges();
 
 
-                    var WorkersList = Context.Workers.Where(x => x.UserId == CurrentUserId).OrderByDescending(x=>x.DateRigster).ToList();
+                    var WorkersList = Context.Workers.Where(x =>x.IsNew==isnew && x.UserId == CurrentUserId).OrderByDescending(x => x.DateRigster).ToList();
 
                     return WorkersList;
                 }
                 else
                 {
-                    return Context.Workers.Where(x=>!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim())).OrderByDescending(x => x.DateRigster).ToList();
+                    return Context.Workers.Where(x => x.IsNew == isnew && (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster).ToList();
 
                 }
 
@@ -412,7 +414,7 @@ namespace FarmsApi.Services
 
         private static void DeleteDirectory(string Id)
         {
-            var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" +Id);
+            var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + Id);
             if (Directory.Exists(BaseLinkSite))
             {
                 DirectoryInfo di = new DirectoryInfo(BaseLinkSite);
@@ -423,8 +425,8 @@ namespace FarmsApi.Services
                 }
                 //foreach (DirectoryInfo dir in di.GetDirectories())
                 //{
-                    di.Delete(true);
-               // }
+                di.Delete(true);
+                // }
 
 
             }
@@ -444,7 +446,7 @@ namespace FarmsApi.Services
 
                         Workers newWork = new Workers();
                         newWork.UserId = GetCurrentUser().Id;
-
+                        newWork.IsNew = true;
                         newWork.DateRigster = DateTime.Now;
                         Context.Workers.Add(newWork);
                         Context.SaveChanges();
@@ -453,7 +455,13 @@ namespace FarmsApi.Services
 
 
                     }
+
+
+
                     var Worker = Context.Workers.Where(x => x.Id == id).FirstOrDefault();
+
+
+
                     return Worker;
 
                 }
@@ -470,7 +478,11 @@ namespace FarmsApi.Services
             }
         }
 
-        public static List<Workers> DeleteWorker(int Id)
+
+
+
+
+        public static List<Workers> DeleteWorker(int Id,bool isnew)
         {
             using (var Context = new Context())
             {
@@ -484,7 +496,7 @@ namespace FarmsApi.Services
                 DeleteDirectory(Id.ToString());
 
 
-                return GetWorkers();
+                return GetWorkers(isnew);
             }
         }
 
@@ -517,62 +529,120 @@ namespace FarmsApi.Services
             if (type == 2 || type == 3)
             {
                 PdfAPI pa = new PdfAPI();
-                pa.CreatePDF(w);
+
+                if(w.IsNew)
+                     pa.CreatePDF(w);
+                else
+                    pa.CreatePDFOnly101(w);
             }
 
             //אם זה שמירה ושליחה למשרד
 
-           
+
             if (type == 2)
             {
 
                 try
                 {
 
-                    var CurrentUser = GetCurrentUser();
-                    
-                    string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
 
-
-                    SmtpClient client = new SmtpClient("82.166.0.201", 25);
-                    client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
-                    client.EnableSsl = false;
-
-                    string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
-
-                    Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
-
-                    string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
-
-                    MailMessage actMSG = new MailMessage(
-                                            "office@ofekmanage.com",
-                                             MailTo,
-                                            Title,
-                                             Body);
-                    
-                    
-                    actMSG.IsBodyHtml = true;
                     var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
-                    Attachment attachment = new Attachment(BaseLinkSite + "/OfekAllPdf.pdf");
 
-                    actMSG.Attachments.Add(attachment);
-                    client.Send(actMSG);
+                    if (!File.Exists(BaseLinkSite + "/Signature.png"))
+                    {
+                        w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
+                        return w;
+                    }
+                    else
+                    {
+                        bool IsEmpty = IsBlank(BaseLinkSite + "/Signature.png");
+                        if (IsEmpty)
+                        {
+                            w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
+                            return w;
+                        }
+                    }
 
-                    w.Status = "נשלח למשרד";
 
 
+
+
+
+
+                    // אם עובד חדש תשלח למשרד
+                    if (w.IsNew)
+                    {
+
+                        var CurrentUser = GetCurrentUser();
+
+                        string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
+
+
+                        SmtpClient client = new SmtpClient("82.166.0.201", 25);
+                        client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
+                        client.EnableSsl = false;
+
+                        string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
+
+                        Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
+
+                        string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
+
+                        MailMessage actMSG = new MailMessage(
+                                                "office@ofekmanage.com",
+                                                 MailTo,
+                                                Title,
+                                                 Body);
+
+
+                        actMSG.IsBodyHtml = true;
+                        //  var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+                        Attachment attachment = new Attachment(BaseLinkSite + "/OfekAllPdf.pdf");
+
+                        actMSG.Attachments.Add(attachment);
+                        client.Send(actMSG);
+
+                        w.Status = "נשלח למשרד";
+                    }
+                    //101 שנתי 
+                    else
+                    {
+
+                        // string ManagerFile =
+                        var BaseLinkSite101 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + w.ShnatMas.ToString());
+                        if (!Directory.Exists(BaseLinkSite101))
+                        {
+                            Directory.CreateDirectory(BaseLinkSite101);
+
+                        }
+
+                        string WorkerPath =  BaseLinkSite101  +"/" + w.UserId;
+
+                        if (!Directory.Exists(WorkerPath))
+                        {
+                            Directory.CreateDirectory(WorkerPath);
+
+                            
+
+                        }
+
+                        File.Copy(BaseLinkSite + "/" +w.UniqNumber+ ".pdf", WorkerPath + "/" + w.UniqNumber + ".pdf", true);
+                        // string filePath = WorkerPath + "\\Signature.png";
+
+                        w.Status = "נשלח למשרד";
+                    }
                 }
                 catch (Exception ex)
                 {
                     w.Status = "תקלה שליחת נתונים";
 
-                   // w.Status = ex.InnerException.ToString();
+                    // w.Status = ex.InnerException.ToString();
                 }
                 finally
                 {
                     using (var Context = new Context())
                     {
-                       
+
                         Context.Entry(w).State = System.Data.Entity.EntityState.Modified;
                         Context.SaveChanges();
 
@@ -586,6 +656,66 @@ namespace FarmsApi.Services
 
             return w;
         }
+
+
+
+
+        public static bool IsBlank(string imageFileName)
+        {
+            double stdDev = GetStdDev(imageFileName);
+            return stdDev < 10;
+        }
+
+        /// <summary>
+        /// Get the standard deviation of pixel values.
+        /// </summary>
+        /// <param name="imageFileName">Name of the image file.</param>
+        /// <returns>Standard deviation.</returns>
+        public static double GetStdDev(string imageFileName)
+        {
+            double total = 0, totalVariance = 0;
+            int count = 0;
+            double stdDev = 0;
+
+            // First get all the bytes
+            using (Bitmap b = new Bitmap(imageFileName))
+            {
+                BitmapData bmData = b.LockBits(new Rectangle(0, 0, b.Width, b.Height), ImageLockMode.ReadOnly, b.PixelFormat);
+                int stride = bmData.Stride;
+                IntPtr Scan0 = bmData.Scan0;
+                unsafe
+                {
+                    byte* p = (byte*)(void*)Scan0;
+                    int nOffset = stride - b.Width * 3;
+                    for (int y = 0; y < b.Height; ++y)
+                    {
+                        for (int x = 0; x < b.Width; ++x)
+                        {
+                            count++;
+                            byte blue = p[0];
+                            byte green = p[1];
+                            byte red = p[2];
+
+                            int pixelValue = red + green + blue;
+                            total += pixelValue;
+                            double avg = total / count;
+                            totalVariance += Math.Pow(pixelValue - avg, 2);
+                            stdDev = Math.Sqrt(totalVariance / count);
+
+                            p += 3;
+                        }
+                        p += nOffset;
+                    }
+                }
+
+                b.UnlockBits(bmData);
+            }
+
+            return stdDev;
+        }
+
+
+
 
         private static void CreatePDF(Workers w)
         {

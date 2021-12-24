@@ -4,11 +4,11 @@
 
 
 
-    app.component('worker', {
-        templateUrl: 'app/workers/worker.template.html?v=3',
-        controller: WorkerController,
+    app.component('workernew', {
+        templateUrl: 'app/workersnew/workernew.template.html?v=3',
+        controller: WorkernewController,
         bindings: {
-            worker: '<',
+            workernew: '<',
             files: '<',
             childs: '<',
             cities: '<',
@@ -18,7 +18,7 @@
         }
     });
 
-    function WorkerController(usersService, $scope, $state, sharedValues, filesService, $window, $timeout) {
+    function WorkernewController(usersService, $scope, $state, sharedValues, filesService, $window, $timeout) {
 
         this.sharedValues = sharedValues;
         this.scope = $scope;
@@ -69,9 +69,12 @@
        // this.image;
         this.init();
         function _init() {
+          
+            var obj = this.workernew;
+
+           // this.workernew.ShnatMas = moment().format('YYYY');
            
-            var obj = this.worker;
-         //   this.image = this.uploadsUri + "/" + this.worker.Id + "/Signature.png";
+         //   this.image = this.uploadsUri + "/" + this.workernew.Id + "/Signature.png";
 
             Object.keys(obj).forEach(function (key, index) {
 
@@ -157,7 +160,7 @@
             //    ctx.drawImage(img, 0, 0); // Or at whatever offset you like
             //};
 
-            //img.src = this.uploadsUri + "/" + this.worker.Id + "/Signature.png";
+            //img.src = this.uploadsUri + "/" + this.workernew.Id + "/Signature.png";
           
         }
 
@@ -168,10 +171,10 @@
 
            
 
-            this.worker.BrunchNumName = "";
+            this.workernew.BrunchNumName = "";
             var allbanksbrunchs = [];
 
-            var selectedBank = this.banks.filter(x => x.Name == this.worker.BankNumName);
+            var selectedBank = this.banks.filter(x => x.Name == this.workernew.BankNumName);
 
             if (selectedBank.length > 0) {
 
@@ -190,7 +193,7 @@
                 
             //    var BankNumName = this.banks[i].Name;
 
-            //    if (BankNumName == this.worker.BankNumName) {
+            //    if (BankNumName == this.workernew.BankNumName) {
 
             //        debugger
             //        allbanksbrunchs = this.banksbrunchs.filter(x => x.BankId == this.banks[i].Id);
@@ -206,7 +209,7 @@
             //    }
 
             //}
-      //  alert(this.worker.BankNumName);
+      //  alert(this.workernew.BankNumName);
 
         }
         
@@ -545,7 +548,7 @@
 
                 var thisCtrl = this;
 
-                var obj = angular.copy(this.worker);
+                var obj = angular.copy(this.workernew);
 
                 Object.keys(obj).forEach(function (key, index) {
 
@@ -586,7 +589,7 @@
                     //    obj["ImgData"] = "";
 
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
-                        //  this.worker = worker;
+                        //  this.workernew = worker;
                         alertMessage('הנתונים נשמרו בהצלחה!');
                         // $.unblockUI();
                         //
@@ -596,15 +599,6 @@
 
                 if (type == 2) {
                     if (this.scope.workerForm.$valid) {
-
-
-                        if (this.tazfiles.length == 0) {
-
-                            alertMessage('חובה לצרף צילום תעודת זהות!');
-                            return;
-                        }
-
-
                       
                         var Signature = $scope.accept();
                         if (!Signature.isEmpty) {
@@ -612,37 +606,12 @@
                         } else {
                             obj["ImgData"] = "";
 
-                            //debugger
-                          
-                            //$('#imgWorker').error(function () {
-                            //    alertMessage('חובה להחתים עובד לפני שליחה למשרד!');
-                            //    return;
-                            //});
-
-                            //if ($('#imgWorker').width() < 20) {
-                            //    alertMessage('חובה להחתים עובד לפני שליחה למשרד!');
-                            //    return;
-
-                            //}
-
-                           
-
-                         
-
-                          
-
                         }
 
 
                         $.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע מעבדים את הנתונים ומייצרים קובץ  PDF ושולחים אותו למשרד <br/>אנא המתנ/י...</div></h5>' });
 
-
-
-                       
-
                         usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
-
-
 
                             $.unblockUI();
                             if (worker.Status == "נשלח למשרד")
@@ -677,7 +646,7 @@
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
 
                         $.unblockUI();
-                        $window.open(this.uploadsUri + "/" + this.worker.Id + "/OfekAllPdf.pdf", '_blank');
+                        $window.open(this.uploadsUri + "/" + this.workernew.Id + "/"+ obj.UniqNumber + ".pdf", '_blank');
 
                     }.bind(this));
 
@@ -696,7 +665,7 @@
 
         function _delete() {
 
-            var dd = this.worker;
+            var dd = this.workernew;
             if (confirm('האם למחוק את המשתמש?')) {
                 usersService.deleteUser(this.user.Id).then(function (res) {
                     $state.go('workers');

@@ -18,9 +18,8 @@ namespace FarmsApi.DataModels
         public DbSet<EsekConfiguraions> EsekConfiguraions { get; set; }
         public DbSet<Files> Files { get; set; }
         public DbSet<WorkerChilds> WorkerChilds { get; set; }
-        
 
-
+       
         public Context() : base("Farms") {
            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Context, FarmsApi.Migrations.Configuration>());
         }

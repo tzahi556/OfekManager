@@ -26,18 +26,29 @@
         }
     });
 
-    function UserController(usersService, $scope, $state) {
+    function UserController(usersService, $scope, $state, sharedValues) {
         this.scope = $scope;
         this.submit = _submit.bind(this);
+
+        
         this.roles = usersService.roles;
         this.delete = _delete.bind(this);
         this.selfEdit = angular.fromJson(localStorage.getItem('authorizationData')).userName == this.user.Email;
         this.role = localStorage.getItem('currentRole');
+        this.areas = sharedValues.areas;
+
+        //this.user.Areaid = this.user.Areaid;
        
         function _submit() {
+
+
+
             if (this.scope.userForm.$valid) {
+               
                 usersService.updateUser(this.user).then(function (user) {
+                  
                     this.user = user;
+                  
                   
                     alert('נשמר בהצלחה');
                 }.bind(this));

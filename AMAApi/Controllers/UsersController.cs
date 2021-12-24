@@ -136,11 +136,11 @@ namespace FarmsApi.Services
         }
 
         [Authorize]
-        [Route("getWorkers")]
+        [Route("getWorkers/{isnew}")]
         [HttpGet]
-        public IHttpActionResult GetWorkers()
+        public IHttpActionResult GetWorkers(bool isnew)
         {
-            return Ok(UsersService.GetWorkers());
+            return Ok(UsersService.GetWorkers(isnew));
         }
 
         [Authorize]
@@ -152,12 +152,12 @@ namespace FarmsApi.Services
         }
 
         [Authorize]
-        [Route("deleteWorker/{id}")]
+        [Route("deleteWorker/{id}/{isnew}")]
         [HttpGet]
-        public IHttpActionResult DeleteWorker(int id)
+        public IHttpActionResult DeleteWorker(int id,bool isnew)
         {
            
-            return Ok(UsersService.DeleteWorker(id));
+            return Ok(UsersService.DeleteWorker(id, isnew));
         }
 
 

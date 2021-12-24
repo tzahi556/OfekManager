@@ -6,6 +6,20 @@
         padding:0px !important;
         margin:0px !important;
     }
+
+    input[type="file"] {
+        display: none;
+    }
+
+    .custom-file-upload {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background: #5bc0de;
+        display: inline-block;
+        padding: 6px 12px;
+        cursor: pointer;
+        color:white;
+    }
 </style>
 <!--<div id="loader"></div>-->
 
@@ -19,6 +33,11 @@
               שליחת טפסים למשרד
             </div>
             <div class="panel-body">
+
+
+
+               
+
 
                 <div class="row">
 
@@ -42,8 +61,18 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <div class="panel-footer" style="padding:0 !important">
-                                    <input type="file" class="form-control" filenamenotupload="" folder="'send'" workerid="0" multiple filename-callback="$ctrl.uploadFile" />
+                                <div class="panel-footer" style="padding:3px !important">
+
+                                    <label class="custom-file-upload">
+                                        <input type="file" class="form-control" filenamenotupload="" folder="'send'" workerid="0" multiple filename-callback="$ctrl.uploadFile"/>
+                                        בחירת קובץ
+                                        <i class="fa fa-cloud-upload"></i>
+                                    </label>
+
+
+
+
+                                    <!--<input type="file" class="form-control" filenamenotupload="" folder="'send'" workerid="0" multiple filename-callback="$ctrl.uploadFile" />-->
                                 </div>
                             </div>
 

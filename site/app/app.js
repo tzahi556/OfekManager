@@ -321,7 +321,29 @@
                     resolve: {
                         workers: function (usersService) {
 
-                            return usersService.getWorkers();
+                            return usersService.getWorkers(true);
+                        }
+                    }
+                }
+            }
+        });
+
+        $stateProvider.state('workersnew', {
+            url: '/workersnew/',
+            views: {
+                'main': {
+                    template: '<workersnew workersnew="$ctrl.workersnew"></workersnew>',
+                    controller: function (workersnew) {
+
+                        this.workersnew = workersnew;
+
+
+                    },
+                    controllerAs: '$ctrl',
+                    resolve: {
+                        workersnew: function (usersService) {
+                          
+                            return usersService.getWorkers(false);
                         }
                     }
                 }
@@ -376,6 +398,54 @@
 
 
 
+
+
+                    }
+                }
+            }
+        });
+
+        $stateProvider.state('workernew', {
+            url: '/workernew/{id}/',
+            views: {
+                'main': {
+                    template: '<workernew workernew="$ctrl.workernew" files="$ctrl.files" childs="$ctrl.childs" cities="$ctrl.cities" banks="$ctrl.banks"  banksbrunchs="$ctrl.banksbrunchs" ></workernew>',
+                    controller: function (workernew, files, childs, cities, banks, banksbrunchs) {
+                        this.workernew = workernew;
+                        this.files = files;
+                        this.childs = childs;
+                        this.cities = cities;
+                        this.banks = banks;
+                        this.banksbrunchs = banksbrunchs;
+
+                    },
+                    controllerAs: '$ctrl',
+                    resolve: {
+                        workernew: function (usersService, $stateParams) {
+
+                            return usersService.getWorker($stateParams.id);
+                        },
+                        files: function (usersService, $stateParams) {
+
+                            return usersService.getFiles($stateParams.id);
+                        },
+                        childs: function (usersService, $stateParams) {
+
+                            return usersService.getWorkerChilds($stateParams.id);
+                        },
+
+                        cities: function (usersService, $stateParams) {
+
+                            return usersService.getMasterTable(1);
+                        },
+                        banks: function (usersService, $stateParams) {
+
+                            return usersService.getMasterTable(2);
+                        },
+                        banksbrunchs: function (usersService, $stateParams) {
+
+                            return usersService.getMasterTable(3);
+                        }
 
 
                     }
@@ -911,7 +981,7 @@
             return {
                 restrict: 'EA',
                 replace: true,
-                template: '<div class="signature"><canvas></canvas></div>',
+                template: '<div class="signature"><canvas id="maincanvas"></canvas></div>',
                 scope: {
                     accept: '=',
                     clear: '=',

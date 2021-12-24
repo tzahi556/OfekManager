@@ -29,7 +29,7 @@ namespace FarmsApi.Services
 
     public class PdfAPI
     {
-        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG" };
+        public static readonly List<string> ImageExtensions = new List<string> { ".JPG", ".JPE", ".BMP", ".GIF", ".PNG", ".JPEG" };
 
         public string MavidPrati = ConfigurationSettings.AppSettings["MavidPrati"].ToString();
         public string MavidCtovet = ConfigurationSettings.AppSettings["MavidCtovet"].ToString();
@@ -259,6 +259,223 @@ namespace FarmsApi.Services
 
         }
 
+        public int CreatePDFOnly101(Workers w)
+        {
+
+
+            //    System.Threading.Thread.Sleep(5000);
+
+            Document document = new Document();
+
+
+            try
+            {
+
+
+                var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
+                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+
+                if (!Directory.Exists(BaseLinkSite))
+                {
+                    Directory.CreateDirectory(BaseLinkSite);
+                }
+
+                // מעתיק את הטמפלט של כל הפידף
+                string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
+
+                // שם אותו זמני 
+                string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
+
+                // שם אותו קבוע עם נתונים 
+                string newFileDestination = System.IO.Path.Combine(BaseLinkSite, w.UniqNumber + ".pdf");
+
+
+
+                PdfReader reader = new PdfReader(existingFile);
+
+
+                //Create a new stream for our output file (this could be a MemoryStream, too)
+                using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    //Use a PdfStamper to bind our source file with our output file
+                    using (PdfStamper stamper = new PdfStamper(reader, fs))
+                    {
+                        //In case of conflict we want our new text to be written "on top" of any existing content
+                        //Get the "Over" state for page 1
+                        using (var Context = new Context())
+                        {
+                            for (int m = 1; m < 3; m++)
+                            {
+                                PdfContentByte cb = stamper.GetOverContent(m);
+                                var TestList = Context.Testpdfs.Where(x => x.PageNumber == m+1).ToList();
+
+                                TestList = GetDataFromObject(w, TestList, Context);
+
+                                BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
+                                foreach (var item in TestList)
+                                {
+
+
+                                    if (item.Comment == "SignutureAmuta")
+                                    {
+
+                                        Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
+
+
+
+                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                        Phrase p = new Phrase();
+                                        p.Add(new Chunk(Signature, 0, 0, true));
+
+                                        ColumnText ct = new ColumnText(cb);
+
+                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                        ct.AddText(p);
+
+                                        ct.Go();
+
+
+
+                                        continue;
+                                    }
+
+
+
+                                    if (item.Comment == "Signuture")
+                                    {
+
+
+                                        if (!File.Exists(BaseLinkSite + "/Signature.png")) continue;
+
+                                        Image Signature = Image.GetInstance(BaseLinkSite + "/Signature.png");
+                                        //logo.ScaleAbsolute(500, 300);
+
+
+                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                        Phrase p = new Phrase();
+                                        p.Add(new Chunk(Signature, 0, 0, true));
+
+                                        ColumnText ct = new ColumnText(cb);
+
+                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                        ct.AddText(p);
+
+                                        ct.Go();
+
+
+
+                                        continue;
+                                    }
+
+
+
+                                    int Space = item.Space;
+                                    if (Space == 1)
+                                    {
+                                        ColumnText ct = new ColumnText(cb);
+
+                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                        ct.AddElement(new Paragraph(item.Word, font));
+
+                                        ct.Go();
+                                    }
+                                    else
+                                    {
+                                        int TextLength = item.Word.Length;
+
+                                        item.Word = Reverse(item.Word);
+
+                                        for (int i = 0; i < TextLength; i++)
+                                        {
+                                            ColumnText ct = new ColumnText(cb);
+
+                                            ct.SetSimpleColumn(item.llx, item.lly, item.urx - (i * Space), item.ury);
+
+                                            Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                            ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                            ct.AddElement(new Paragraph(item.Word[i].ToString(), font));
+
+                                            ct.Go();
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+                        }
+
+
+                    }
+                    //fs.Close();
+                    //fs.Dispose();
+
+                    //פה מחזיר חזרה
+                    File.Copy(newFile, newFileDestination, true);
+
+
+                    if (File.Exists(newFile))
+                    {
+
+                        File.Delete(newFile);
+
+                    }
+                }
+
+
+
+
+
+            }
+            catch (DocumentException de)
+            {
+                Console.Error.WriteLine(de.Message);
+            }
+            catch (IOException ioe)
+            {
+                Console.Error.WriteLine(ioe.Message);
+            }
+
+
+
+            document.Close();
+
+
+            //מעתיק את כל המסמכים הפידףים המצורפים
+            //var BaseLinkSite2 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+            //string sourceDir = BaseLinkSite2;
+            //string OutputFile = BaseLinkSite2 + "/OfekAllPdfTemp.pdf";
+            //string OutputFileDestination = BaseLinkSite2 + "/OfekAllPdf.pdf";
+
+            ////בפנים יש צירוף של תמונות 
+            //CreateMergedPDF(OutputFile, sourceDir, OutputFileDestination);
+
+
+            return 1;
+
+        }
         private List<Testpdfs> GetDataFromObject(Workers w, List<Testpdfs> TestLists, Context Context)
         {
             List<Testpdfs> tp = new List<Testpdfs>();
@@ -641,7 +858,7 @@ namespace FarmsApi.Services
 
                     //Resize image depend upon your need
                     float pageWidth = document.PageSize.Width - (35 + 35);
-                    jpg.ScaleToFit(document.PageSize.Width, document.PageSize.Height/3);
+                    jpg.ScaleToFit(document.PageSize.Width, document.PageSize.Height);
 
                     //Give space before image
 

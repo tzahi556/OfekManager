@@ -3,16 +3,16 @@
     var app = angular.module('app');
 
   
-    app.component('workers', {
-        templateUrl: 'app/workers/workers.template.html',
-        controller: WorkersController,
+    app.component('workersnew', {
+        templateUrl: 'app/workersnew/workers.template.html',
+        controller: WorkersnewController,
         bindings: {
-            workers: '<'
+            workersnew: '<'
             
         }
     });
 
-    function WorkersController(usersService, sharedValues, $state) {
+    function WorkersnewController(usersService, sharedValues, $state) {
 
    
         this.roles = usersService.roles;
@@ -35,7 +35,7 @@
                 usersService.deleteWorker(workerid,false).then(function (res) {
 
                    
-                    ctrl.workers = res;
+                    ctrl.workersnew = res;
                    // $state.go('workers');
                     //ctrl.user.Deleted = true;
                     //$state.go('students');

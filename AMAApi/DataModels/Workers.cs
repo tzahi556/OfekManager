@@ -146,9 +146,8 @@ namespace FarmsApi.DataModels
         public string BrunchNumName { get; set; }
         public string BankAccountNumber { get; set; }
         public string Comments { get; set; }
-      
-
-
+        public string UniqNumber { get; set; }
+        public bool IsNew { get; set; }
         public object this[string propertyName]
         {
             get {

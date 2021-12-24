@@ -77,12 +77,12 @@
 
 
 
-        function _getWorkers() {
+        function _getWorkers(isnew) {
             
-           
+            ///if (isnew == -1) isnew = true;
             var deferred = $q.defer();
          
-            $http.get(sharedValues.apiUrl + 'users/getWorkers/').then(function (res) {
+            $http.get(sharedValues.apiUrl + 'users/getWorkers/' + isnew).then(function (res) {
                
                 var res = res.data;
                 deferred.resolve(res);
@@ -105,11 +105,11 @@
             return deferred.promise;
         }
 
-        function _deleteWorker(id) {
+        function _deleteWorker(id,isnew) {
             var deferred = $q.defer();
 
 
-            $http.get(sharedValues.apiUrl + 'users/deleteWorker/' + id).then(function (res) {
+            $http.get(sharedValues.apiUrl + 'users/deleteWorker/' + id + '/' + isnew).then(function (res) {
              
                 var res = res.data;
                 deferred.resolve(res);
