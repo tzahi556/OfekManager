@@ -43,268 +43,28 @@
             }
         });
 
-        //$stateProvider.state('logout', {
-        //    url: '/logout/',
-        //    views: {
-        //        'main': {
-        //            template: '',
-        //            controller: function (authenticationService, $state) {
-        //                authenticationService.logOut();
-        //            },
-        //            resolve: {
-        //                unregister: function ($http, sharedValues) {
-        //                    var deviceToken = localStorage.getItem('deviceToken');
-        //                    return $http.post(sharedValues.apiUrl + 'notifications/unregister/', '"' + deviceToken + '"');
-        //                }
-        //            }
-        //        }
-        //    }
-        //});
 
-
-        //$stateProvider.state('notifications', {
-        //    url: '/notifications/',
-        //    views: {
-        //        'main': {
-        //            template: '<notifications notifications="$ctrl.notifications"></notifications>',
-        //            controller: function (notifications) {
-        //                this.notifications = notifications;
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                notifications: function (notificationsService) {
-        //                    return notificationsService.getNotifications();
-        //                }
-        //            }
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('reports', {
-        //    url: '/reports/',
-        //    views: {
-        //        'main': {
-        //            template: '<reports></reports>',
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('closetoken', {
-        //    url: '/closetoken',
-        //    views: {
-        //        'main': {
-        //            template: '<closetoken></closetoken>',
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('farms', {
-        //    url: '/farms/',
-        //    views: {
-        //        'main': {
-        //            template: '<farms farms="$ctrl.farms"></farms>',
-        //            controller: function (farms) {
-        //                this.farms = farms;
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                farms: function (farmsService) {
-        //                    return farmsService.getFarms();
-        //                }
-        //            }
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('farm', {
-        //    url: '/farm/{id}',
-        //    views: {
-        //        'main': {
-        //            template: '<farm farm="$ctrl.farm"></farm>',
-        //            controller: function (farm) {
-        //                this.farm = farm;
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                farm: function (farmsService, $stateParams) {
-        //                    return farmsService.getFarm($stateParams.id);
-        //                }
-        //            }
-        //        }
-        //    }
-        //});
-
-
-        //$stateProvider.state('farmmanager', {
-        //    url: '/farmmanager/',
-        //    views: {
-        //        'main': {
-        //            template: '<farmmanager farmmanager="$ctrl.farmmanager" farminstructors="$ctrl.farminstructors" horses="$ctrl.horses" horsegroups="$ctrl.horsegroups" horsegroupshorses="$ctrl.horsegroupshorses" ></farmmanager>',
-        //            controller: function (farmmanager, farminstructors, horses, horsegroups, horsegroupshorses) {
-
-        //                this.farmmanager = farmmanager;
-        //                this.farminstructors = farminstructors;
-        //                this.horses = horses;
-        //                this.horsegroups = horsegroups;
-        //                this.horsegroupshorses = horsegroupshorses;
-
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                farmmanager: function (farmsService, $stateParams) {
-
-        //                    return farmsService.getMangerFarm();
-        //                },
-        //                farminstructors: function (farmsService, $stateParams) {
-
-        //                    return farmsService.getMangerInstructorFarm();
-        //                },
-        //                horses: function (horsesService) {
-        //                    return horsesService.getHorses();
-        //                },
-        //                horsegroups: function (horsesService) {
-        //                    return horsesService.getSetHorseGroups(1);
-        //                },
-
-        //                horsegroupshorses: function (horsesService) {
-        //                    return horsesService.getSetHorseGroupsHorses(1);
-        //                },
-
-
-        //            }
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('horses', {
-        //    url: '/horses/',
-        //    views: {
-        //        'main': {
-        //            template: '<horses horses="$ctrl.horses" horsevetrinars="$ctrl.horsevetrinars" farms="$ctrl.farms"></horses>',
-        //            controller: function (horses, horsevetrinars, farms) {
-        //                this.horses = horses;
-        //                this.farms = farms;
-
-        //                this.horsevetrinars = horsevetrinars.filter(x => x.UserId == null);
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                horses: function (horsesService) {
-        //                    return horsesService.getHorses();
-        //                },
-        //                horsevetrinars: function (horsesService) {
-        //                    return horsesService.getHorseVetrinars();
-        //                },
-        //                farms: function (farmsService) {
-        //                    return farmsService.getFarms();
-        //                },
-        //            }
-        //        }
-        //    }
-        //});
-
-        //$stateProvider.state('horse', {
-        //    url: '/horse/{id}',
-        //    views: {
-        //        'main': {
-        //            template: '<horse horse="$ctrl.horse" farms="$ctrl.farms" horses="$ctrl.horses" files="$ctrl.files"  hozefiles="$ctrl.hozefiles" pundekautfiles="$ctrl.pundekautfiles" treatments="$ctrl.treatments"  vaccinations="$ctrl.vaccinations" shoeings="$ctrl.shoeings" tilufings="$ctrl.tilufings" pregnancies="$ctrl.pregnancies"  pregnanciesstates="$ctrl.pregnanciesstates"  inseminations="$ctrl.inseminations" susut="$ctrl.susut" hozims="$ctrl.hozims" instructors="$ctrl.instructors" horsesmultiplefiles="$ctrl.horsesmultiplefiles" ></horse>',
-        //            controller: function (horse, farms, horses, files, hozefiles, pundekautfiles, treatments, vaccinations, shoeings, tilufings, pregnancies, pregnanciesstates, inseminations, susut, hozims, instructors, horsesmultiplefiles) {
-        //                this.horse = horse;
-        //                this.farms = farms;
-        //                this.horses = horses;
-
-        //                this.files = files;
-        //                this.hozefiles = hozefiles;
-        //                this.pundekautfiles = pundekautfiles;
-        //                this.treatments = treatments;
-
-        //                this.vaccinations = vaccinations;
-        //                this.shoeings = shoeings;
-        //                this.tilufings = tilufings;
-        //                this.pregnancies = pregnancies;
-        //                this.pregnanciesstates = pregnanciesstates;
-
-        //                this.inseminations = inseminations;
-
-        //                this.susut = susut;
-
-        //                this.hozims = hozims;
-        //                this.instructors = instructors;
-        //                this.horsesmultiplefiles = horsesmultiplefiles;
+        $stateProvider.state('reportarea', {
+            url: '/reportarea/',
+            views: {
+                'main': {
+                    template: '<reportarea reportarea="$ctrl.reportarea"></reportarea>',
+                    controller: function (reportarea) {
+                        this.reportarea = reportarea;
+                    },
+                    controllerAs: '$ctrl',
+                    resolve: {
+                        reportarea: function (usersService) {
+                            return usersService.getReportData(1);
+                        }
+                    }
+                }
+            }
+        });
 
 
 
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                horse: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 1);
-        //                },
-        //                files: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 2);
-        //                },
 
-        //                hozefiles: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 3);
-        //                },
-
-        //                pundekautfiles: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 4);
-        //                },
-
-
-        //                treatments: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 5);
-        //                },
-
-        //                vaccinations: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 6);
-        //                },
-        //                shoeings: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 7);
-        //                },
-
-        //                tilufings: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 8);
-        //                },
-
-        //                pregnancies: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 9);
-        //                },
-        //                pregnanciesstates: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 10);
-        //                },
-
-        //                inseminations: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 11);
-        //                },
-
-        //                hozims: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 12);
-        //                },
-
-        //                horsesmultiplefiles: function (horsesService, $stateParams) {
-        //                    return horsesService.getHorse($stateParams.id, 13);
-        //                },
-
-
-
-        //                instructors: function (usersService) {
-        //                    return usersService.getUsers(['instructor', 'profAdmin'], true);
-        //                },
-        //                susut: function (horsesService) {
-        //                    return horsesService.getSusut();
-        //                },
-        //                horses: function (horsesService) {
-        //                    return horsesService.getHorses();
-        //                },
-        //                farms: function (farmsService) {
-        //                    return farmsService.getFarms();
-        //                },
-        //            }
-        //        }
-        //    }
-        //});
 
         $stateProvider.state('workers', {
             url: '/workers/',
@@ -342,7 +102,7 @@
                     controllerAs: '$ctrl',
                     resolve: {
                         workersnew: function (usersService) {
-                          
+
                             return usersService.getWorkers(false);
                         }
                     }
@@ -388,8 +148,8 @@
                             return usersService.getMasterTable(2);
                         },
                         banksbrunchs: function (usersService, $stateParams) {
-                             
-                              return usersService.getMasterTable(3);
+
+                            return usersService.getMasterTable(3);
                         }
 
 
@@ -494,23 +254,23 @@
             }
         });
 
-        //$stateProvider.state('instructors', {
-        //    url: '/instructors/',
-        //    views: {
-        //        'main': {
-        //            template: '<instructors users="$ctrl.users"></instructors>',
-        //            controller: function (users) {
-        //                this.users = users;
-        //            },
-        //            controllerAs: '$ctrl',
-        //            resolve: {
-        //                users: function (usersService) {
-        //                    return usersService.getUsers(['instructor', 'profAdmin']);
-        //                }
-        //            }
-        //        }
-        //    }
-        //});
+        $stateProvider.state('logs', {
+            url: '/logs/',
+            views: {
+                'main': {
+                    template: '<logs users="$ctrl.users"></logs>',
+                    controller: function (users) {
+                        this.users = users;
+                    },
+                    controllerAs: '$ctrl',
+                    resolve: {
+                        users: function (usersService) {
+                            return usersService.getUsers(['instructor', 'profAdmin']);
+                        }
+                    }
+                }
+            }
+        });
         //$stateProvider.state('lessons', {
         //    url: '/lessons/',
         //    views: {
@@ -839,6 +599,22 @@
 
     app.run(function ($rootScope, $http, sharedValues) {
 
+        var DeviceEnter = "";
+        var ua = navigator.userAgent;
+        if (/(tablet|ipad|playbook|silk)|(android(?!.*mobi))/i.test(ua)) {
+            DeviceEnter = "tablet";
+        }
+        else if (/Mobile|Android|iP(hone|od)|IEMobile|BlackBerry|Kindle|Silk-Accelerated|(hpw|web)OS|Opera M(obi|ini)/.test(ua)) {
+            DeviceEnter = "mobile";
+        } else {
+            DeviceEnter = "desktop";
+        }
+
+        $http.post(sharedValues.apiUrl + 'users/setUserDevice/', { DeviceEnter: DeviceEnter, UserAgent: ua }).then(function (res) {
+
+            //var worker = res.data;
+            //deferred.resolve(worker);
+        });
 
 
         //document.addEventListener("dragstart", onOnline, false);
@@ -880,6 +656,8 @@
         $http.defaults.headers.common['Access-Control-Allow-Methods'] = 'GET,POST,PUT,HEAD,DELETE,OPTIONS';
 
         var iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+
 
         // צחי שינה כדי שיעבוד ללא הפיירבס 
         //  if (!iOS) {

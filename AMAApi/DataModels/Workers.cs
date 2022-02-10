@@ -12,6 +12,9 @@ namespace FarmsApi.DataModels
         public int Id { get; set; }
 
         public int UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public User UserManager{ get; set; }
         public string ShnatMas { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -148,6 +151,24 @@ namespace FarmsApi.DataModels
         public string Comments { get; set; }
         public string UniqNumber { get; set; }
         public bool IsNew { get; set; }
+
+        public string ManagerName
+        {
+            get
+            {
+                //var DBNumber = mispar_rechev;
+
+                //if (DBNumber.StartsWith('0'))
+                //{
+
+                //    return DBNumber.Substring(1, 7);
+                //}
+
+                if (this.UserManager == null) return null;
+                return this.UserManager.FirstName + ' ' + this.UserManager.LastName;
+
+            }
+        }
         public object this[string propertyName]
         {
             get {

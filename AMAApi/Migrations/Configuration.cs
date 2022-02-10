@@ -10,7 +10,7 @@ namespace FarmsApi.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
-           // AutomaticMigrationDataLossAllowed = true;
+           AutomaticMigrationDataLossAllowed = true;
             //ContextKey = "FarmsApi.Migrations.Configuration";
         }
 

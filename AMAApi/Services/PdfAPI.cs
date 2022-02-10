@@ -50,195 +50,185 @@ namespace FarmsApi.Services
             Document document = new Document();
 
 
-            try
+
+
+
+            var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
+            var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+
+            if (!Directory.Exists(BaseLinkSite))
             {
+                Directory.CreateDirectory(BaseLinkSite);
+            }
+
+            // מעתיק את הטמפלט של כל הפידף
+            string existingFile = System.IO.Path.Combine(BaseLink, "OfekAll.pdf");
+
+            // שם אותו זמני 
+            string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
+
+            // שם אותו קבוע עם נתונים 
+            string newFileDestination = System.IO.Path.Combine(BaseLinkSite, "OfekAll.pdf");
 
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
-                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
 
-                if (!Directory.Exists(BaseLinkSite))
+            PdfReader reader = new PdfReader(existingFile);
+
+
+            //Create a new stream for our output file (this could be a MemoryStream, too)
+            using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                //Use a PdfStamper to bind our source file with our output file
+                using (PdfStamper stamper = new PdfStamper(reader, fs))
                 {
-                    Directory.CreateDirectory(BaseLinkSite);
-                }
-
-                // מעתיק את הטמפלט של כל הפידף
-                string existingFile = System.IO.Path.Combine(BaseLink, "OfekAll.pdf");
-
-                // שם אותו זמני 
-                string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
-
-                // שם אותו קבוע עם נתונים 
-                string newFileDestination = System.IO.Path.Combine(BaseLinkSite, "OfekAll.pdf");
-
-
-
-                PdfReader reader = new PdfReader(existingFile);
-
-
-                //Create a new stream for our output file (this could be a MemoryStream, too)
-                using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    //Use a PdfStamper to bind our source file with our output file
-                    using (PdfStamper stamper = new PdfStamper(reader, fs))
+                    //In case of conflict we want our new text to be written "on top" of any existing content
+                    //Get the "Over" state for page 1
+                    using (var Context = new Context())
                     {
-                        //In case of conflict we want our new text to be written "on top" of any existing content
-                        //Get the "Over" state for page 1
-                        using (var Context = new Context())
+                        for (int m = 1; m < 10; m++)
                         {
-                            for (int m = 1; m < 10; m++)
+                            PdfContentByte cb = stamper.GetOverContent(m);
+                            var TestList = Context.Testpdfs.Where(x => x.PageNumber == m).ToList();
+
+                            TestList = GetDataFromObject(w, TestList, Context);
+
+                            BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
+                            foreach (var item in TestList)
                             {
-                                PdfContentByte cb = stamper.GetOverContent(m);
-                                var TestList = Context.Testpdfs.Where(x => x.PageNumber == m).ToList();
 
-                                TestList = GetDataFromObject(w, TestList, Context);
 
-                                BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
-                                foreach (var item in TestList)
+                                if (item.Comment == "SignutureAmuta")
+                                {
+
+                                    Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
+
+
+
+                                    Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                    Phrase p = new Phrase();
+                                    p.Add(new Chunk(Signature, 0, 0, true));
+
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddText(p);
+
+                                    ct.Go();
+
+
+
+                                    continue;
+                                }
+
+
+
+                                if (item.Comment == "Signuture")
                                 {
 
 
-                                    if (item.Comment == "SignutureAmuta")
+                                    if (!File.Exists(BaseLinkSite + "/Signature.png")) continue;
+
+                                    Image Signature = Image.GetInstance(BaseLinkSite + "/Signature.png");
+                                    //logo.ScaleAbsolute(500, 300);
+
+
+                                    Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                    Phrase p = new Phrase();
+                                    p.Add(new Chunk(Signature, 0, 0, true));
+
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddText(p);
+
+                                    ct.Go();
+
+
+
+                                    continue;
+                                }
+
+
+
+                                int Space = item.Space;
+                                if (Space == 1)
+                                {
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddElement(new Paragraph(item.Word, font));
+
+                                    ct.Go();
+                                }
+                                else
+                                {
+                                    int TextLength = item.Word.Length;
+
+                                    item.Word = Reverse(item.Word);
+
+                                    for (int i = 0; i < TextLength; i++)
                                     {
-
-                                        Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
-
-
-
-                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
-
-
-                                        Phrase p = new Phrase();
-                                        p.Add(new Chunk(Signature, 0, 0, true));
-
                                         ColumnText ct = new ColumnText(cb);
 
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx - (i * Space), item.ury);
 
                                         Font font = new Font(bf, float.Parse(item.Font.ToString()));
 
                                         ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
-                                        ct.AddText(p);
+                                        ct.AddElement(new Paragraph(item.Word[i].ToString(), font));
 
                                         ct.Go();
-
-
-
-                                        continue;
-                                    }
-
-
-
-                                    if (item.Comment == "Signuture")
-                                    {
-
-
-                                        if (!File.Exists(BaseLinkSite + "/Signature.png")) continue;
-
-                                        Image Signature = Image.GetInstance(BaseLinkSite + "/Signature.png");
-                                        //logo.ScaleAbsolute(500, 300);
-
-
-                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
-
-
-                                        Phrase p = new Phrase();
-                                        p.Add(new Chunk(Signature, 0, 0, true));
-
-                                        ColumnText ct = new ColumnText(cb);
-
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
-
-                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                        ct.AddText(p);
-
-                                        ct.Go();
-
-
-
-                                        continue;
-                                    }
-
-
-
-                                    int Space = item.Space;
-                                    if (Space == 1)
-                                    {
-                                        ColumnText ct = new ColumnText(cb);
-
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
-
-                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                        ct.AddElement(new Paragraph(item.Word, font));
-
-                                        ct.Go();
-                                    }
-                                    else
-                                    {
-                                        int TextLength = item.Word.Length;
-
-                                        item.Word = Reverse(item.Word);
-
-                                        for (int i = 0; i < TextLength; i++)
-                                        {
-                                            ColumnText ct = new ColumnText(cb);
-
-                                            ct.SetSimpleColumn(item.llx, item.lly, item.urx - (i * Space), item.ury);
-
-                                            Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                            ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                            ct.AddElement(new Paragraph(item.Word[i].ToString(), font));
-
-                                            ct.Go();
-
-                                        }
 
                                     }
 
                                 }
 
                             }
+
                         }
-
-
                     }
-                    //fs.Close();
-                    //fs.Dispose();
-
-                    //פה מחזיר חזרה
-                    File.Copy(newFile, newFileDestination, true);
 
 
-                    if (File.Exists(newFile))
-                    {
-
-                        File.Delete(newFile);
-
-                    }
                 }
+                //fs.Close();
+                //fs.Dispose();
+
+                //פה מחזיר חזרה
+                File.Copy(newFile, newFileDestination, true);
 
 
+                if (File.Exists(newFile))
+                {
 
+                    File.Delete(newFile);
 
-
+                }
             }
-            catch (DocumentException de)
-            {
-                Console.Error.WriteLine(de.Message);
-            }
-            catch (IOException ioe)
-            {
-                Console.Error.WriteLine(ioe.Message);
-            }
+
+
+
+
+
 
 
 
@@ -268,195 +258,184 @@ namespace FarmsApi.Services
             Document document = new Document();
 
 
-            try
+
+
+            var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
+            var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+
+            if (!Directory.Exists(BaseLinkSite))
             {
+                Directory.CreateDirectory(BaseLinkSite);
+            }
+
+            // מעתיק את הטמפלט של כל הפידף
+            string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
+
+            // שם אותו זמני 
+            string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
+
+            // שם אותו קבוע עם נתונים 
+            string newFileDestination = System.IO.Path.Combine(BaseLinkSite, w.UniqNumber + ".pdf");
 
 
-                var BaseLink = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/");
-                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
 
-                if (!Directory.Exists(BaseLinkSite))
+            PdfReader reader = new PdfReader(existingFile);
+
+
+            //Create a new stream for our output file (this could be a MemoryStream, too)
+            using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
+            {
+                //Use a PdfStamper to bind our source file with our output file
+                using (PdfStamper stamper = new PdfStamper(reader, fs))
                 {
-                    Directory.CreateDirectory(BaseLinkSite);
-                }
-
-                // מעתיק את הטמפלט של כל הפידף
-                string existingFile = System.IO.Path.Combine(BaseLink, "101.pdf");
-
-                // שם אותו זמני 
-                string newFile = System.IO.Path.Combine(BaseLinkSite, "OfekAllTemp.pdf");
-
-                // שם אותו קבוע עם נתונים 
-                string newFileDestination = System.IO.Path.Combine(BaseLinkSite, w.UniqNumber + ".pdf");
-
-
-
-                PdfReader reader = new PdfReader(existingFile);
-
-
-                //Create a new stream for our output file (this could be a MemoryStream, too)
-                using (FileStream fs = new FileStream(newFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    //Use a PdfStamper to bind our source file with our output file
-                    using (PdfStamper stamper = new PdfStamper(reader, fs))
+                    //In case of conflict we want our new text to be written "on top" of any existing content
+                    //Get the "Over" state for page 1
+                    using (var Context = new Context())
                     {
-                        //In case of conflict we want our new text to be written "on top" of any existing content
-                        //Get the "Over" state for page 1
-                        using (var Context = new Context())
+                        for (int m = 1; m < 3; m++)
                         {
-                            for (int m = 1; m < 3; m++)
+                            PdfContentByte cb = stamper.GetOverContent(m);
+                            var TestList = Context.Testpdfs.Where(x => x.PageNumber == m + 1).ToList();
+
+                            TestList = GetDataFromObject(w, TestList, Context);
+
+                            BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
+                            foreach (var item in TestList)
                             {
-                                PdfContentByte cb = stamper.GetOverContent(m);
-                                var TestList = Context.Testpdfs.Where(x => x.PageNumber == m+1).ToList();
 
-                                TestList = GetDataFromObject(w, TestList, Context);
 
-                                BaseFont bf = BaseFont.CreateFont("c:/windows/fonts/arial.ttf", BaseFont.IDENTITY_H, true);
-                                foreach (var item in TestList)
+                                if (item.Comment == "SignutureAmuta")
+                                {
+
+                                    Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
+
+
+
+                                    Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                    Phrase p = new Phrase();
+                                    p.Add(new Chunk(Signature, 0, 0, true));
+
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddText(p);
+
+                                    ct.Go();
+
+
+
+                                    continue;
+                                }
+
+
+
+                                if (item.Comment == "Signuture")
                                 {
 
 
-                                    if (item.Comment == "SignutureAmuta")
+                                    if (!File.Exists(BaseLinkSite + "/Signature.png")) continue;
+
+                                    Image Signature = Image.GetInstance(BaseLinkSite + "/Signature.png");
+                                    //logo.ScaleAbsolute(500, 300);
+
+
+                                    Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
+
+
+                                    Phrase p = new Phrase();
+                                    p.Add(new Chunk(Signature, 0, 0, true));
+
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddText(p);
+
+                                    ct.Go();
+
+
+
+                                    continue;
+                                }
+
+
+
+                                int Space = item.Space;
+                                if (Space == 1)
+                                {
+                                    ColumnText ct = new ColumnText(cb);
+
+                                    ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+
+                                    Font font = new Font(bf, float.Parse(item.Font.ToString()));
+
+                                    ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
+
+                                    ct.AddElement(new Paragraph(item.Word, font));
+
+                                    ct.Go();
+                                }
+                                else
+                                {
+                                    int TextLength = item.Word.Length;
+
+                                    item.Word = Reverse(item.Word);
+
+                                    for (int i = 0; i < TextLength; i++)
                                     {
-
-                                        Image Signature = Image.GetInstance(BaseLink + "/SignatureAmuta.png");
-
-
-
-                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
-
-
-                                        Phrase p = new Phrase();
-                                        p.Add(new Chunk(Signature, 0, 0, true));
-
                                         ColumnText ct = new ColumnText(cb);
 
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
+                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx - (i * Space), item.ury);
 
                                         Font font = new Font(bf, float.Parse(item.Font.ToString()));
 
                                         ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
 
-                                        ct.AddText(p);
+                                        ct.AddElement(new Paragraph(item.Word[i].ToString(), font));
 
                                         ct.Go();
-
-
-
-                                        continue;
-                                    }
-
-
-
-                                    if (item.Comment == "Signuture")
-                                    {
-
-
-                                        if (!File.Exists(BaseLinkSite + "/Signature.png")) continue;
-
-                                        Image Signature = Image.GetInstance(BaseLinkSite + "/Signature.png");
-                                        //logo.ScaleAbsolute(500, 300);
-
-
-                                        Signature.ScaleAbsolute(float.Parse(((int)item.Font).ToString()), float.Parse(((int)item.Space).ToString()));
-
-
-                                        Phrase p = new Phrase();
-                                        p.Add(new Chunk(Signature, 0, 0, true));
-
-                                        ColumnText ct = new ColumnText(cb);
-
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
-
-                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                        ct.AddText(p);
-
-                                        ct.Go();
-
-
-
-                                        continue;
-                                    }
-
-
-
-                                    int Space = item.Space;
-                                    if (Space == 1)
-                                    {
-                                        ColumnText ct = new ColumnText(cb);
-
-                                        ct.SetSimpleColumn(item.llx, item.lly, item.urx, item.ury);
-
-                                        Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                        ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                        ct.AddElement(new Paragraph(item.Word, font));
-
-                                        ct.Go();
-                                    }
-                                    else
-                                    {
-                                        int TextLength = item.Word.Length;
-
-                                        item.Word = Reverse(item.Word);
-
-                                        for (int i = 0; i < TextLength; i++)
-                                        {
-                                            ColumnText ct = new ColumnText(cb);
-
-                                            ct.SetSimpleColumn(item.llx, item.lly, item.urx - (i * Space), item.ury);
-
-                                            Font font = new Font(bf, float.Parse(item.Font.ToString()));
-
-                                            ct.RunDirection = PdfWriter.RUN_DIRECTION_RTL;
-
-                                            ct.AddElement(new Paragraph(item.Word[i].ToString(), font));
-
-                                            ct.Go();
-
-                                        }
 
                                     }
 
                                 }
 
                             }
+
                         }
-
-
                     }
-                    //fs.Close();
-                    //fs.Dispose();
-
-                    //פה מחזיר חזרה
-                    File.Copy(newFile, newFileDestination, true);
 
 
-                    if (File.Exists(newFile))
-                    {
-
-                        File.Delete(newFile);
-
-                    }
                 }
+                //fs.Close();
+                //fs.Dispose();
+
+                //פה מחזיר חזרה
+                File.Copy(newFile, newFileDestination, true);
 
 
+                if (File.Exists(newFile))
+                {
 
+                    File.Delete(newFile);
 
-
+                }
             }
-            catch (DocumentException de)
-            {
-                Console.Error.WriteLine(de.Message);
-            }
-            catch (IOException ioe)
-            {
-                Console.Error.WriteLine(ioe.Message);
-            }
+
+
+
+
+
 
 
 
@@ -512,11 +491,11 @@ namespace FarmsApi.Services
 
 
 
-                if (PropertyValue == "1Brunch" && res != null )
+                if (PropertyValue == "1Brunch" && res != null)
                 {
 
                     string[] resSplit = res.ToString().Split('-');
-                    
+
                     item.Word = resSplit[0].Trim();
                     tp.Add(item);
 
@@ -532,7 +511,7 @@ namespace FarmsApi.Services
                         item.Word = resSplit[1].Trim();
                     else
                         item.Word = "";
-                   tp.Add(item);
+                    tp.Add(item);
 
                 }
 

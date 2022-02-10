@@ -7,6 +7,9 @@ namespace FarmsApi.DataModels
     public class Context : DbContext
     {
 
+
+
+
         public DbSet<Banks> Banks { get; set; }
         public DbSet<BanksBrunchs> BanksBrunchs { get; set; }
 
@@ -19,13 +22,19 @@ namespace FarmsApi.DataModels
         public DbSet<Files> Files { get; set; }
         public DbSet<WorkerChilds> WorkerChilds { get; set; }
 
-       
+        public DbSet<Logs> Logs { get; set; }
+
         public Context() : base("Farms") {
-           Database.SetInitializer(new MigrateDatabaseToLatestVersion<Context, FarmsApi.Migrations.Configuration>());
+            // this.Configuration.ProxyCreationEnabled = false;
+          
+            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Context, FarmsApi.Migrations.Configuration>());
+          
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            //modelBuilder.Entity<Workers>().HasMany(s => s).WithOne(s => s.);
+
             modelBuilder.Conventions.Remove<OneToManyCascadeDeleteConvention>();
         }
     }

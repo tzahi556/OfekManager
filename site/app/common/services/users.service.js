@@ -41,7 +41,38 @@
         this.bindData = _bindData;
         this.getMasterTable = _getMasterTable;
 
+        this.getReportData = _getReportData;
+        this.downloadAllManagerFiles = _downloadAllManagerFiles;
         
+        this.importWorkers = _importWorkers;
+
+        this.getLogsData = _getLogsData;
+
+
+        function _getLogsData(userid, start, end) {
+          
+            var deferred = $q.defer();
+            $http.get(sharedValues.apiUrl + 'users/getLogsData/', { params: { userid: userid, start: start, end: end } }).then(function (res) {
+
+                deferred.resolve(res.data);
+            });
+
+
+            return deferred.promise;
+        }
+
+
+        function _importWorkers(portfolioItems, counter) {
+           
+            var deferred = $q.defer();
+            $http.post(sharedValues.apiUrl + 'users/importWorkers/' + counter, portfolioItems).then(function () {
+                deferred.resolve();
+            });
+            return deferred.promise;
+        }
+
+
+
 
         function _getFiles(workerid) {
 
@@ -56,6 +87,41 @@
             });
             return deferred.promise;
         }
+
+        
+
+        function _downloadAllManagerFiles(Id, Shnatmas) {
+
+
+            var deferred = $q.defer();
+
+            $http.get(sharedValues.apiUrl + 'users/downloadAllManagerFiles/' + Id + '/' + Shnatmas).then(function (res) {
+
+                var res = res.data;
+                deferred.resolve(res);
+
+            });
+            return deferred.promise;
+        }
+
+
+
+        function _getReportData(type) {
+
+
+            var deferred = $q.defer();
+
+            $http.get(sharedValues.apiUrl + 'users/getReportData/' + type).then(function (res) {
+
+                var res = res.data;
+                deferred.resolve(res);
+
+            });
+            return deferred.promise;
+        }
+
+        
+
 
 
         function _getMasterTable(type) {

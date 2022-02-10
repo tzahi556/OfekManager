@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,8 +22,19 @@ namespace FarmsApi.DataModels
         public bool Deleted { get; set; }
 
         public string AreaId { get; set; }
+        public string AreaId2 { get; set; }
 
+        public string FullName
+        {
+            get
+            {
+              
 
+                if (this.FirstName == null) return null;
+                return this.FirstName + ' ' + this.LastName;
+
+            }
+        }
 
 
     }

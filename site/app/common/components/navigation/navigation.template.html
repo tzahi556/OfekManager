@@ -14,11 +14,16 @@
 
         <li data-ui-sref-active="active" ng-if="$ctrl.users"><a ui-sref="users">משתמשים</a></li>
         <li data-ui-sref-active="active" ng-if="$ctrl.workers"><a ui-sref="workers">קליטת עובדים</a></li>
-        <li data-ui-sref-active="active" ng-if="$ctrl.workersnew"><a ui-sref="workersnew">101
-            שנתי</a></li>
-        
+        <li data-ui-sref-active="active" ng-if="$ctrl.workersnew">
+            <a ui-sref="workersnew">
+                101
+                שנתי
+            </a>
+        </li>
+        <li data-ui-sref-active="active" ng-if="$ctrl.reportarea"><a ui-sref="reportarea">דוח 101 לפי אזורים</a></li>
         <li data-ui-sref-active="active" ng-if="$ctrl.docs"><a ui-sref="docs">העלאת טפסים</a></li>
-
+        <li data-ui-sref-active="active" ng-if="$ctrl.logs"><a ui-sref="logs">לוג תנועות מנהלים</a></li>
+        
     </ul>
 
 

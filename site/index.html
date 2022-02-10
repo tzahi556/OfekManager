@@ -53,7 +53,14 @@
 
     <link rel="manifest" href="manifest.json">
 
-
+    <!--<script type='text/javascript'>
+        window.smartlook || (function (d) {
+            var o = smartlook = function () { o.api.push(arguments) }, h = d.getElementsByTagName('head')[0];
+            var c = d.createElement('script'); o.api = new Array(); c.async = true; c.type = 'text/javascript';
+            c.charset = 'utf-8'; c.src = 'https://rec.smartlook.com/recorder.js'; h.appendChild(c);
+        })(document);
+        smartlook('init', '433d545b3af27f860b5329eee8453dc260cc8176');
+    </script>-->
 
 
 
@@ -104,7 +111,7 @@
     <script src="css/signature_pad.js"></script>
 
 
-    <script src="app/app.js"></script>
+    <script src="app/app.js?v=4"></script>
     <script src="css/autocomplete.js"></script>
     <script src="css/bcPaint.js"></script>
     <script src="css/jquery.blockUI.js"></script>
@@ -126,8 +133,8 @@
 
 
 
-    <script src="app/users/users.component.js"></script>
-    <script src="app/users/user.component.js"></script>
+    <script src="app/users/users.component.js?v=3"></script>
+    <script src="app/users/user.component.js?v=3"></script>
     <script src="app/aws/awsmangers.component.js"></script>
     <script src="app/aws/bindtodata.component.js"></script>
     <script src="app/aws/awsauto.component.js"></script>
@@ -135,11 +142,12 @@
     <script src="app/awshistory/awsmangershistory.component.js"></script>
     <script src="app/awshistory/awsmangershistoryphrase.component.js"></script>
     <script src="app/workers/workers.component.js"></script>
-    <script src="app/workersnew/workers.component.js"></script>
-    <script src="app/workers/worker.component.js?v=2"></script>
+    <script src="app/workersnew/workers.component.js?v=3"></script>
+    <script src="app/workers/worker.component.js?v=3"></script>
     <script src="app/workersnew/workernew.component.js"></script>
     <script src="app/docs/docs.component.js"></script>
-
+    <script src="app/report/reportarea.component.js"></script>
+    <script src="app/report/logs.component.js"></script>
     <script src="app/login/login.component.js"></script>
 
     <script src="css/jquery.inputmask.bundle.js"></script>

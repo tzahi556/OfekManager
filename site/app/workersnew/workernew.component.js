@@ -72,7 +72,8 @@
           
             var obj = this.workernew;
 
-           // this.workernew.ShnatMas = moment().format('YYYY');
+            if (!this.workernew.ShnatMas)
+               this.workernew.ShnatMas = moment().format('YYYY');
            
          //   this.image = this.uploadsUri + "/" + this.workernew.Id + "/Signature.png";
 
@@ -598,6 +599,8 @@
                 }
 
                 if (type == 2) {
+
+
                     if (this.scope.workerForm.$valid) {
                       
                         var Signature = $scope.accept();

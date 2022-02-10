@@ -39,7 +39,14 @@
             <div class="form-group">
                 <label>אזור עובדת</label>
                 <select class="form-control" ng-options="area.id as area.name for area in $ctrl.areas" ng-model="$ctrl.user.AreaId" required>
-                    <option value="">בחרי אזור</option>
+                    <option value="">--בחרי אזור--</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>אזור 2 עובדת</label>
+                <select class="form-control" ng-options="area.id as area.name for area in $ctrl.areas" ng-model="$ctrl.user.AreaId2" >
+                    <option value="">--בחרי אזור 2-- </option>
                 </select>
             </div>
             <!--<div class="form-group" ng-if="$ctrl.role=='sysAdmin'">

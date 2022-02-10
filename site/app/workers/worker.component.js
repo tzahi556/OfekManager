@@ -72,6 +72,9 @@
            
             var obj = this.worker;
          //   this.image = this.uploadsUri + "/" + this.worker.Id + "/Signature.png";
+             debugger
+            if (!this.worker.ShnatMas)
+                this.worker.ShnatMas = moment().format('YYYY');
 
             Object.keys(obj).forEach(function (key, index) {
 

@@ -13,7 +13,7 @@
         <table class="table table-hover">
             <thead>
                 <tr>
-
+                    <th>מנהל אזור</th>
                     <th>שם פרטי</th>
                     <th>שם משפחה</th>
                     <th>אימייל</th>
@@ -31,7 +31,7 @@
                     </td>
                 </tr>
                 <tr ng-repeat="worker in $ctrl.workersnew | filter:$ctrl.filter">
-
+                    <td>{{worker.ManagerName}}</td>
                     <td>{{worker.FirstName}}</td>
                     <td>{{worker.LastName}}</td>
                     <td>{{worker.Email}}</td>

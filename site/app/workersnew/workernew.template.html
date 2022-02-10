@@ -107,7 +107,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>שנת מס</label>
-                            <select class="form-control" ng-model="$ctrl.workernew.ShnatMas" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.ShnatMas" >
                                 <option value="">--בחר שנת מס--</option>
                                 <option value="2021">2021</option>
                                 <option value="2022">2022</option>
@@ -127,7 +127,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>שם פרטי</label>
-                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.FirstName" ng-change="$ctrl.workernew.HeskemWorkerName=$ctrl.workernew.FirstName + ' ' + $ctrl.workernew.LastName" required />
+                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.FirstName" ng-change="$ctrl.workernew.HeskemWorkerName=$ctrl.workernew.FirstName + ' ' + $ctrl.workernew.LastName"  />
                             <!--<label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>-->
@@ -137,7 +137,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>שם משפחה</label>
-                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.LastName" ng-change="$ctrl.workernew.HeskemWorkerName= $ctrl.workernew.FirstName +' ' + $ctrl.workernew.LastName" required />
+                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.LastName" ng-change="$ctrl.workernew.HeskemWorkerName= $ctrl.workernew.FirstName +' ' + $ctrl.workernew.LastName"  />
                             <!--<label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>-->
@@ -147,7 +147,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תעודת זהות</label>
-                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.Taz" ng-change="$ctrl.workernew.HeskemWorkerTaz=$ctrl.workernew.Taz" required />
+                            <input type="text" disabled class="form-control" ng-model="$ctrl.workernew.Taz" ng-change="$ctrl.workernew.HeskemWorkerTaz=$ctrl.workernew.Taz"  />
                             <!--<label class="tp-help-below">
                                 ע"פ הרשום בת.ז.
                             </label>-->
@@ -196,7 +196,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך לידה</label>
-                            <input type="text" class="form-control date" ng-model="$ctrl.workernew.BirthDate" required />
+                            <input type="text" class="form-control date" ng-model="$ctrl.workernew.BirthDate"  />
 
                         </div>
 
@@ -212,7 +212,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מס' טלפון נייד</label>
-                            <input type="text" name="Taz" class="form-control" ng-model="$ctrl.workernew.PhoneSelular" ng-change="$ctrl.workernew.HeskemWorkerPhone= $ctrl.workernew.PhoneSelular" required />
+                            <input type="text" name="Taz" class="form-control" ng-model="$ctrl.workernew.PhoneSelular" ng-change="$ctrl.workernew.HeskemWorkerPhone= $ctrl.workernew.PhoneSelular"  />
 
                         </div>
 
@@ -238,7 +238,7 @@
 
 
 
-                            <input id="txtCity" class="form-control autocomplete" type="text" autocomplete="off" ng-model="$ctrl.workernew.City" required>
+                            <input id="txtCity" class="form-control autocomplete" type="text" autocomplete="off" ng-model="$ctrl.workernew.City" >
 
                         </div>
 
@@ -246,7 +246,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>רחוב</label>
-                            <input type="text" class="form-control" ng-model="$ctrl.workernew.Street" ng-change="$ctrl.workernew.HeskemWorkerStreet= $ctrl.workernew.Street + ' ' + $ctrl.workernew.HouseNumber" required />
+                            <input type="text" class="form-control" ng-model="$ctrl.workernew.Street" ng-change="$ctrl.workernew.HeskemWorkerStreet= $ctrl.workernew.Street + ' ' + $ctrl.workernew.HouseNumber"  />
 
                         </div>
 
@@ -254,7 +254,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מס' בית</label>
-                            <input type="text" class="form-control" ng-model="$ctrl.workernew.HouseNumber" ng-change="$ctrl.workernew.HeskemWorkerStreet= $ctrl.workernew.Street + ' ' + $ctrl.workernew.HouseNumber" required />
+                            <input type="text" class="form-control" ng-model="$ctrl.workernew.HouseNumber" ng-change="$ctrl.workernew.HeskemWorkerStreet= $ctrl.workernew.Street + ' ' + $ctrl.workernew.HouseNumber"  />
 
                         </div>
 
@@ -282,7 +282,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>כתובת דואר אלקטרוני</label>
-                            <input class="form-control" type="email" ng-model="$ctrl.workernew.Email" required>
+                            <input class="form-control" type="email" ng-model="$ctrl.workernew.Email" >
 
                         </div>
 
@@ -290,7 +290,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מין</label>
-                            <select class="form-control" ng-model="$ctrl.workernew.Gender" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.Gender" >
                                 <option value="">--בחר מין--</option>
                                 <option value="1">זכר</option>
                                 <option value="2">נקבה</option>
@@ -303,7 +303,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תושב ישראל </label>
-                            <select class="form-control" ng-model="$ctrl.workernew.ToshavIsrael" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.ToshavIsrael" >
                                 <option value="">--תושב ישראל--</option>
                                 <option value="1">כן</option>
                                 <option value="2">לא</option>
@@ -316,7 +316,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>חבר קיבוץ / מושב שיתופי</label>
-                            <select class="form-control" ng-model="$ctrl.workernew.Kibutz" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.Kibutz" >
                                 <option value="">--חבר קיבוץ / מושב שיתופי--</option>
                                 <option value="1">כן</option>
                                 <option value="2">לא</option>
@@ -341,7 +341,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>חבר בקופת חולים </label>
-                            <select class="form-control" ng-model="$ctrl.workernew.KupatHolim" ng-change="$ctrl.workernew.Kupa=null" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.KupatHolim" ng-change="$ctrl.workernew.Kupa=null" >
                                 <option value="">--חבר קופת חולים--</option>
                                 <option value="1">כן</option>
                                 <option value="2">לא</option>
@@ -373,7 +373,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>מצב משפחתי</label>
-                            <select class="form-control" ng-model="$ctrl.workernew.StatusFamely" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.StatusFamely" >
                                 <option value="">--בחר מצב משפחתי--</option>
                                 <option value="1">רווק/ה</option>
                                 <option value="2">נשוי/אה</option>
@@ -545,7 +545,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>אני מקבל/ת </label>
-                            <select class="form-control" ng-model="$ctrl.workernew.SugMaskuret" required>
+                            <select class="form-control" ng-model="$ctrl.workernew.SugMaskuret" >
                                 <option value="">בחר סוג הכנסה</option>
                                 <option value="1">משכורת חודש</option>
                                 <option value="2">שכר עבודה (עובד יומי)</option>
@@ -562,7 +562,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>תאריך תחילת העבודה בשנת המס</label>
-                            <input type="text" class="form-control date" ng-model="$ctrl.workernew.StartWorkDate" required />
+                            <input type="text" class="form-control date" ng-model="$ctrl.workernew.StartWorkDate"  />
                         </div>
 
                     </div>
@@ -2102,7 +2102,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label> שכר שעתי</label>
-                                    <input type="number" class="form-control" ng-model="$ctrl.workernew.HeskemWorkerMaskuert3" required />
+                                    <input type="number" class="form-control" ng-model="$ctrl.workernew.HeskemWorkerMaskuert3"  />
                                 </div>
 
                             </div>
@@ -2110,7 +2110,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label> שכר גלובלי</label>
-                                    <input type="number" class="form-control" ng-model="$ctrl.workernew.HeskemWorkerMaskuert4" required />
+                                    <input type="number" class="form-control" ng-model="$ctrl.workernew.HeskemWorkerMaskuert4"  />
                                 </div>
 
                             </div>

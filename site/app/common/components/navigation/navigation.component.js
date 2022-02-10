@@ -40,7 +40,8 @@
 
             this.workersnew = ['sysAdmin', 'farmAdmin', 'instructor'].indexOf(role) != -1 ? true : false;
 
-
+            this.reportarea = ['sysAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;
+            this.logs = ['sysAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;
             //this.awsauto = ['sysAdmin', 'awsAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;
             //this.awsmangershistory = ['sysAdmin', 'awsAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;
             //this.awsmangershistoryphrase = ['sysAdmin', 'awsAdmin', 'farmAdmin'].indexOf(role) != -1 ? true : false;

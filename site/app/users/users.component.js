@@ -7,10 +7,10 @@
             var returnUsers = [];
             for (var i in users) {
 
-               // users[i].Role = this.sharedValues.roles.filter(x => x.id == users[i].Role)[0].name;//(users[i].Role);
+                // users[i].Role = this.sharedValues.roles.filter(x => x.id == users[i].Role)[0].name;//(users[i].Role);
                 if (showInUsers(users[i].Role)) {
 
-                    
+
                     returnUsers.push(users[i]);
                 }
             }
@@ -37,34 +37,39 @@
         controller: UsersController,
         bindings: {
             users: '<'
-            
+
         }
     });
 
     function UsersController(usersService, sharedValues) {
-      
+
         this.roles = usersService.roles;
         this.sharedValues = sharedValues;
         this.getHebRole = _getHebRole.bind(this);
         this.getHebArea = _getHebArea.bind(this);
         function _getHebRole(id) {
 
-        
+
             return this.sharedValues.roles.filter(x => x.id == id)[0].name;//(users[i].Role);
         }
 
-        function _getHebArea(id) {
+        function _getHebArea(id, num) {
 
             if (!id) return "";
             var res = this.sharedValues.areas.filter(x => x.id == id);
-            if (res.length > 0)
-                return this.sharedValues.areas.filter(x => x.id == id)[0].name;//(users[i].Role);
+            if (res.length > 0) {
+
+                res = this.sharedValues.areas.filter(x => x.id == id)[0].name;
+
+                if (num) res = "," + res;
+                return res;//(users[i].Role);
+            }
             else
                 return "";
         }
 
 
-        
+
 
 
     }

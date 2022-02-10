@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -15,6 +16,7 @@ using System.Net.Mail;
 using System.Security.Claims;
 using System.Web;
 using System.Web.UI.WebControls;
+using System.IO.Compression;
 
 
 namespace FarmsApi.Services
@@ -355,8 +357,8 @@ namespace FarmsApi.Services
 
         public static List<Workers> GetWorkers(bool isnew)
         {
-          
-            
+
+
             using (var Context = new Context())
             {
 
@@ -393,26 +395,41 @@ namespace FarmsApi.Services
                     }
 
 
-
+                    try { 
 
 
                     Context.SaveChanges();
 
+                    }
+                    catch (Exception ex)
+                    {
 
-                    var WorkersList = Context.Workers.Where(x =>x.IsNew==isnew && x.UserId == CurrentUserId).OrderByDescending(x => x.DateRigster).ToList();
+
+                    }
+
+
+                    var WorkersList = Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew && x.UserId == CurrentUserId).OrderByDescending(x => x.DateRigster).ToList();
 
                     return WorkersList;
                 }
                 else
                 {
-                    return Context.Workers.Where(x => x.IsNew == isnew && (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster).ToList();
+                    //Context.Configuration.LazyLoadingEnabled = false;
+
+                    // var Demo = Context.Workers.Include(x=>x.UserManager).ToList();
+
+                    //var movieList = Context.Workers
+                    //             .Include()   // ADD THIS INCLUDE
+                    //             .ToList();
+
+                    return Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew && (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster).ToList();
 
                 }
 
             }
         }
 
-        private static void DeleteDirectory(string Id)
+        public static void DeleteDirectory(string Id)
         {
             var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + Id);
             if (Directory.Exists(BaseLinkSite))
@@ -451,6 +468,8 @@ namespace FarmsApi.Services
                         Context.Workers.Add(newWork);
                         Context.SaveChanges();
                         id = newWork.Id;
+
+                        AddToLogDB("", "", " הקמת עובדת חדשה " + id, null, "",id);
                         // return newWork;
 
 
@@ -458,7 +477,7 @@ namespace FarmsApi.Services
 
 
 
-                    var Worker = Context.Workers.Where(x => x.Id == id).FirstOrDefault();
+                    var Worker = Context.Workers.Include(x => x.UserManager).Where(x => x.Id == id).FirstOrDefault();
 
 
 
@@ -468,7 +487,7 @@ namespace FarmsApi.Services
                 else
                 {
                     var CurrentUserId = GetCurrentUser().Id;
-                    return Context.Workers.SingleOrDefault(u => u.Id == CurrentUserId);
+                    return Context.Workers.Include(x => x.UserManager).SingleOrDefault(u => u.Id == CurrentUserId);
 
                 }
 
@@ -482,11 +501,14 @@ namespace FarmsApi.Services
 
 
 
-        public static List<Workers> DeleteWorker(int Id,bool isnew)
+        public static List<Workers> DeleteWorker(int Id, bool isnew)
         {
             using (var Context = new Context())
             {
                 var Worker = Context.Workers.SingleOrDefault(u => u.Id == Id);
+
+                AddToLogDB("", "", " מחיקת עובדת " + Worker.Id, null, "", Worker.Id);
+
 
                 Context.Workers.Remove(Worker);
 
@@ -525,135 +547,148 @@ namespace FarmsApi.Services
             List<WorkerChilds> wc = dataObj[2].ToObject<List<WorkerChilds>>();
             if (wc != null) UpdateWorkerChildsObject(wc, w);
 
-
-            if (type == 2 || type == 3)
-            {
-                PdfAPI pa = new PdfAPI();
-
-                if(w.IsNew)
-                     pa.CreatePDF(w);
-                else
-                    pa.CreatePDFOnly101(w);
-            }
-
-            //אם זה שמירה ושליחה למשרד
-
-
-            if (type == 2)
+            try
             {
 
-                try
+                if (type == 2 || type == 3)
                 {
+                    PdfAPI pa = new PdfAPI();
 
-
-                    var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
-
-                    if (!File.Exists(BaseLinkSite + "/Signature.png"))
-                    {
-                        w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
-                        return w;
-                    }
-                    else
-                    {
-                        bool IsEmpty = IsBlank(BaseLinkSite + "/Signature.png");
-                        if (IsEmpty)
-                        {
-                            w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
-                            return w;
-                        }
-                    }
-
-
-
-
-
-
-
-                    // אם עובד חדש תשלח למשרד
                     if (w.IsNew)
                     {
-
-                        var CurrentUser = GetCurrentUser();
-
-                        string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
-
-
-                        SmtpClient client = new SmtpClient("82.166.0.201", 25);
-                        client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
-                        client.EnableSsl = false;
-
-                        string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
-
-                        Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
-
-                        string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
-
-                        MailMessage actMSG = new MailMessage(
-                                                "office@ofekmanage.com",
-                                                 MailTo,
-                                                Title,
-                                                 Body);
-
-
-                        actMSG.IsBodyHtml = true;
-                        //  var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
-                        Attachment attachment = new Attachment(BaseLinkSite + "/OfekAllPdf.pdf");
-
-                        actMSG.Attachments.Add(attachment);
-                        client.Send(actMSG);
-
-                        w.Status = "נשלח למשרד";
+                        if (type == 2) AddToLogDB("", "", " יצירת פדפ לעובדת חדשה  " + w.Id, null, "", w.Id);
+                        pa.CreatePDF(w);
                     }
-                    //101 שנתי 
+
                     else
                     {
-
-                        // string ManagerFile =
-                        var BaseLinkSite101 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + w.ShnatMas.ToString());
-                        if (!Directory.Exists(BaseLinkSite101))
-                        {
-                            Directory.CreateDirectory(BaseLinkSite101);
-
-                        }
-
-                        string WorkerPath =  BaseLinkSite101  +"/" + w.UserId;
-
-                        if (!Directory.Exists(WorkerPath))
-                        {
-                            Directory.CreateDirectory(WorkerPath);
-
-                            
-
-                        }
-
-                        File.Copy(BaseLinkSite + "/" +w.UniqNumber+ ".pdf", WorkerPath + "/" + w.UniqNumber + ".pdf", true);
-                        // string filePath = WorkerPath + "\\Signature.png";
-
-                        w.Status = "נשלח למשרד";
+                        if (type == 2) AddToLogDB("", "", " יצירת פדפ לעובדת קיים  " + w.Id, null, "", w.Id);
+                        pa.CreatePDFOnly101(w);
                     }
                 }
-                catch (Exception ex)
-                {
-                    w.Status = "תקלה שליחת נתונים";
 
-                    // w.Status = ex.InnerException.ToString();
-                }
-                finally
+                //אם זה שמירה ושליחה למשרד
+                if (type == 2)
                 {
-                    using (var Context = new Context())
+
+                    try
                     {
 
-                        Context.Entry(w).State = System.Data.Entity.EntityState.Modified;
-                        Context.SaveChanges();
+
+                        var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+
+                        if (!File.Exists(BaseLinkSite + "/Signature.png"))
+                        {
+                            w.Status = "לא ניתן לשלוח ללא חתימת עובדתת";
+                            return w;
+                        }
+                        else
+                        {
+                            bool IsEmpty = IsBlank(BaseLinkSite + "/Signature.png");
+                            if (IsEmpty)
+                            {
+                                w.Status = "לא ניתן לשלוח ללא חתימת עובדתת";
+                                return w;
+                            }
+                        }
+
+
+                        // אם עובדת חדש תשלח למשרד
+                        if (w.IsNew)
+                        {
+
+                            var CurrentUser = GetCurrentUser();
+
+                            string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
+
+
+                            SmtpClient client = new SmtpClient("82.166.0.201", 25);
+                            client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
+                            client.EnableSsl = false;
+
+                            string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדתת חדשה.</div><br/>";// </html>";
+
+                            Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
+
+                            string Title = "עובדתת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
+
+                            MailMessage actMSG = new MailMessage(
+                                                    "office@ofekmanage.com",
+                                                     MailTo,
+                                                    Title,
+                                                     Body);
+
+
+                            actMSG.IsBodyHtml = true;
+                            //  var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/" + w.Id);
+                            Attachment attachment = new Attachment(BaseLinkSite + "/OfekAllPdf.pdf");
+
+                            actMSG.Attachments.Add(attachment);
+                            client.Send(actMSG);
+
+                            w.Status = "נשלח למשרד";
+
+                            AddToLogDB("", "", " שליחה למשרד של עובדת חדשה  " + w.Id, null, "", w.Id);
+                        }
+                        //101 שנתי 
+                        else
+                        {
+
+                            // string ManagerFile =
+                            var BaseLinkSite101 = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + w.ShnatMas.ToString());
+                            if (!Directory.Exists(BaseLinkSite101))
+                            {
+                                Directory.CreateDirectory(BaseLinkSite101);
+
+                            }
+
+                            string WorkerPath = BaseLinkSite101 + "/" + w.UserId;
+
+                            if (!Directory.Exists(WorkerPath))
+                            {
+                                Directory.CreateDirectory(WorkerPath);
+
+
+
+                            }
+
+                            File.Copy(BaseLinkSite + "/" + w.UniqNumber + ".pdf", WorkerPath + "/" + w.UniqNumber + ".pdf", true);
+                            // string filePath = WorkerPath + "\\Signature.png";
+
+                            w.Status = "נשלח למשרד";
+
+                            AddToLogDB("", "", " שליחה למשרד של עובדת קיימת  " + w.Id, null, "", w.Id);
+                        }
+
+                      
+                    }
+                    catch (Exception ex)
+                    {
+                        w.Status = "תקלה שליחת נתונים";
+                        AddToLogDB("", "", " תקלה שליחה למשרד של עובדת  " + w.Id, null, ex.Message, w.Id);
+                        // w.Status = ex.InnerException.ToString();
+                    }
+                    finally
+                    {
+                        using (var Context = new Context())
+                        {
+
+                            Context.Entry(w).State = System.Data.Entity.EntityState.Modified;
+                            Context.SaveChanges();
+
+                        }
+
 
                     }
-
 
                 }
 
             }
+            catch (Exception ex)
+            {
+                AddToLogDB("", "", " תקלה שליחה למשרד של עובדת  " + w.Id, null, ex.Message, w.Id);
 
-
+            }
             return w;
         }
 
@@ -735,6 +770,7 @@ namespace FarmsApi.Services
                     if (item.Id == 0)
                     {
                         Context.WorkerChilds.Add(item);
+                        AddToLogDB("", "", " הקמת ילד לעובדת " + item.Id, null, "", item.Id);
 
                     }
                     else
@@ -756,6 +792,7 @@ namespace FarmsApi.Services
                     foreach (WorkerChilds item in differenceQuery)
                     {
                         Context.Entry(item).State = System.Data.Entity.EntityState.Deleted;
+                        AddToLogDB("", "", " מחיקת ילד לעובדת " + item.Id, null, "", item.Id);
                     }
 
 
@@ -789,6 +826,8 @@ namespace FarmsApi.Services
                     {
                         Context.Files.Add(item);
 
+                        AddToLogDB("", "", " הוספת קובץ לעובדת " + item.Id, null, "", item.Id);
+
                     }
                     else
                     {
@@ -809,6 +848,8 @@ namespace FarmsApi.Services
                     foreach (Files item in differenceQuery)
                     {
                         Context.Entry(item).State = System.Data.Entity.EntityState.Deleted;
+
+                        AddToLogDB("", "", " מחיקת קובץ לעובדת " + item.Id, null, "", item.Id);
                     }
 
 
@@ -837,9 +878,9 @@ namespace FarmsApi.Services
 
                 Worker.Status = "נתונים נשמרו";
                 Context.Entry(Worker).State = System.Data.Entity.EntityState.Modified;
-
+                
                 Context.SaveChanges();
-
+                AddToLogDB("", "", " שמירת נתונים לעובדת " + Worker.Id, null, "", Worker.Id);
 
                 if (!string.IsNullOrEmpty(Worker.ImgData))
                 {
@@ -862,6 +903,8 @@ namespace FarmsApi.Services
 
 
                     File.WriteAllBytes(filePath, GetValidString(Worker.ImgData));
+
+                    AddToLogDB("", "", " הוספת חתימה לעובדת " + Worker.Id, null, "", Worker.Id);
                 }
 
                 return Worker;
@@ -1070,10 +1113,139 @@ namespace FarmsApi.Services
             }
         }
 
+        public static List<Report> GetReportData(int type)
+        {
+            using (var Context = new Context())
+            {
+                try
+                {
+                    SqlParameter TypePara = new SqlParameter("Type", 1);
+                    SqlParameter YearPara = new SqlParameter("Year", DateTime.Now.Year);
+
+                    var query = Context.Database.SqlQuery<Report>
+                    ("GetReportData @Type,@Year", TypePara, YearPara);
+
+
+
+                    var res = query.ToList();
+
+
+                    return res;
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+        }
+
+        public static string DownloadAllManagerFiles(int Id, int Shnatmas)
+        {
+            using (var Context = new Context())
+            {
+
+                var BaseLinkSite = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + Shnatmas + "/" + Id + "/");
+                // var ZipLink = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + Shnatmas + "/" + Id + "/");
+                var ZipPath = System.Web.HttpContext.Current.Server.MapPath("~/Uploads/Years_" + Shnatmas + "/" + Id + ".zip");
+                if (Directory.Exists(BaseLinkSite))
+                {
+
+                    // ZipArchive ddd = new ZipArchive();
+                    if (File.Exists(ZipPath))
+                    {
+                        File.Delete(ZipPath);
+
+                    }
+                    ZipFile.CreateFromDirectory(BaseLinkSite, ZipPath);
+
+                    return "1";
+
+                }
+
+
+
+                return "0";
+            }
+        }
+
+        public static void AddEnterLog(JObject dataobj)
+        {
+
+            string DeviceEnter = dataobj["DeviceEnter"].ToString();
+            string UserAgent = dataobj["UserAgent"].ToString();
+            string Action = "נכנס לאתר";
+            AddToLogDB(DeviceEnter, UserAgent, Action, null, "",0);
+
+
+        }
+
+
+        public static void ImportWorkers(List<Workers> WorkersItems, int counter)
+        {
 
 
 
 
+            string ShnatMas = DateTime.Now.Year.ToString();
+
+            DateTime CurrentDate = DateTime.Now;
+
+            using (var Context = new Context())
+            {
+                var existingUniqNumber = Context.Workers.Where(x=>x.UniqNumber!=null && x.ShnatMas== ShnatMas).Select(x => x.UniqNumber).ToList();
+
+                var nonExistWorkers = WorkersItems.Where(x => !existingUniqNumber.Contains(x.UniqNumber)).ToList();
+
+
+
+                nonExistWorkers.Select(c => { c.DateRigster = CurrentDate; return c; }).ToList();
+
+                Context.Workers.AddRange(nonExistWorkers);
+               
+                Context.SaveChanges();
+
+              //  var existedIds = Context.Workers.Where(p => WorkersItems.Contains( p.UniqNumber)).Select(p => p.itemId).ToList();
+
+
+            }
+        }
+
+        public static List<Logs> GetLogsData(int userid, string start, string end)
+        {
+            DateTime dtStart = Convert.ToDateTime(start);
+            DateTime dtSEnd = Convert.ToDateTime(end);
+            using (var Context = new Context())
+            {
+                var LogsList = Context.Logs.Where(u => u.UserId == userid && u.DateTime <= dtSEnd && u.DateTime >= dtStart).OrderBy(x=>x.DateTime).ToList();
+                return LogsList;
+            }
+        }
+        private static void AddToLogDB(string deviceEnter, string userAgent, string action, User u, string Expetion,int WorkerId)
+        {
+            if (u == null) u = GetCurrentUser();
+           
+
+            using (var Context = new Context())
+            {
+              //  if (WorkerId != 0)
+               var WorkerObj = Context.Workers.Where(x => x.Id == WorkerId).FirstOrDefault();
+               Logs l = new Logs();
+                l.Device = deviceEnter;
+                l.UserAgent = userAgent;
+                l.Action = action;
+                l.DateTime = DateTime.Now;
+                l.Expetion = Expetion;
+                l.UserId = u.Id;
+                l.UserName = u.FirstName + ' ' + u.LastName;
+                if(WorkerObj != null) l.WorkerName = WorkerObj.FirstName + " " + WorkerObj.LastName;
+                Context.Logs.Add(l);
+                Context.SaveChanges();
+
+
+            }
+        }
+
+        // UsersService.AddEnterLog(dataobj)
 
 
 

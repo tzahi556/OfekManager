@@ -1,6 +1,7 @@
 ﻿using FarmsApi.DataModels;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Web.Http;
 
@@ -10,15 +11,21 @@ namespace FarmsApi.Services
     public class UsersController : ApiController
     {
 
-        [Route("UpdateUsersLessons")]
+        [Route("DeleteYear")]
         [HttpGet]
-        public string UpdateUsersLessons()
+        public string DeleteYear()
         {
+            using (var Context = new Context())
+            {
+
+                var Wor = Context.Workers.Where(x => x.ShnatMas == "2021").ToList();
+                foreach (var item in Wor)
+                {
+                    DeleteWorkerLoop(item.Id,true);
+                }
 
 
-            
-
-
+            }
 
             //UploadFromAccess uac = new UploadFromAccess();
             //uac.UpdateUsersLessons();
@@ -28,15 +35,32 @@ namespace FarmsApi.Services
         }
 
 
-      
+        public static void DeleteWorkerLoop(int Id, bool isnew)
+        {
+            using (var Context = new Context())
+            {
+                var Worker = Context.Workers.SingleOrDefault(u => u.Id == Id);
+
+
+                Context.Workers.Remove(Worker);
+
+                Context.SaveChanges();
+
+
+                UsersService.DeleteDirectory(Id.ToString());
+
+
+               
+            }
+        }
 
 
 
 
-      
 
 
-       
+
+
 
 
 
@@ -114,13 +138,13 @@ namespace FarmsApi.Services
         [HttpGet]
         public IHttpActionResult GetPortfolios(int llx, int lly, int urx, int ury, string text, int font, int space, int id, int pagenumber)
         {
-            return Ok(UsersService.GetPortfolios( llx,  lly,  urx,  ury,  text, font, space, id, pagenumber));
+            return Ok(UsersService.GetPortfolios(llx, lly, urx, ury, text, font, space, id, pagenumber));
         }
-       
+
         [Authorize]
         [Route("bindData/{id}/{comment}/{pagenumber}/{value}")]
         [HttpGet]
-        public IHttpActionResult BindData(int id,  string comment, int pagenumber, string value)
+        public IHttpActionResult BindData(int id, string comment, int pagenumber, string value)
         {
             return Ok(UsersService.BindData(id, comment, pagenumber, value));
         }
@@ -154,9 +178,9 @@ namespace FarmsApi.Services
         [Authorize]
         [Route("deleteWorker/{id}/{isnew}")]
         [HttpGet]
-        public IHttpActionResult DeleteWorker(int id,bool isnew)
+        public IHttpActionResult DeleteWorker(int id, bool isnew)
         {
-           
+
             return Ok(UsersService.DeleteWorker(id, isnew));
         }
 
@@ -176,8 +200,23 @@ namespace FarmsApi.Services
         [HttpPost]
         public IHttpActionResult UpdateWorkerAndFiles(JArray dataobj, int type)
         {
-            return Ok(UsersService.UpdateWorkerAndFiles(dataobj,type));
+            return Ok(UsersService.UpdateWorkerAndFiles(dataobj, type));
         }
+
+        [Authorize]
+        [Route("setUserDevice")]
+        [HttpPost]
+        public IHttpActionResult SetUserDevice(JObject dataobj)
+        {
+            //dataobj["DeviceEnter"].ToString();
+            UsersService.AddEnterLog(dataobj);
+            return Ok();
+        }
+
+
+
+
+
         //******************************************** End Workers *****************************
         //******************************************** Master Table *****************************
         [Authorize]
@@ -201,14 +240,54 @@ namespace FarmsApi.Services
                     return null;
             }
 
-            
+
         }
 
 
 
 
-        
+
 
         //******************************************** End Master Table *****************************
+
+        //******************************************** Report *****************************
+        [Authorize]
+        [Route("getReportData/{type}")]
+        [HttpGet]
+        public IHttpActionResult GetReportData(int type)
+        {
+            return Ok(UsersService.GetReportData(type));
+        }
+
+
+        [Authorize]
+        [Route("downloadAllManagerFiles/{Id}/{Shnatmas}")]
+        [HttpGet]
+        public IHttpActionResult DownloadAllManagerFiles(int Id, int Shnatmas)
+        {
+            return Ok(UsersService.DownloadAllManagerFiles(Id, Shnatmas));
+        }
+
+
+        [Authorize]
+        [Route("importWorkers/{counter}")]
+        [HttpPost]
+        public IHttpActionResult ImportWorkers(int counter, List<DataModels.Workers> WorkersItems)
+        {
+
+            UsersService.ImportWorkers(WorkersItems, counter);
+            return Ok();
+
+        }
+
+
+        [Authorize]
+        [Route("getLogsData")]
+        [HttpGet]
+        public IHttpActionResult GetLogsData(int userid, string start, string end)
+        {
+
+            return Ok(UsersService.GetLogsData(userid, start, end));
+        }
     }
 }
