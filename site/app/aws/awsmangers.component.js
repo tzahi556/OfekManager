@@ -35,11 +35,11 @@
 
         this.text = "";
 
-        this.scroll = 0;
-        this.pageNumber = "1";
+        this.scroll = 5700;
+        this.pageNumber = "6";
     
 
-       // $("#divContainer").animate({ scrollTop: this.scroll }, "fast");
+        $("#divContainer").animate({ scrollTop: this.scroll }, "fast");
         function _changePageNumber() {
            
             //alert($("#objPdf").scrollTop());

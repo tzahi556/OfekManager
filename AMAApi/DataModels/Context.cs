@@ -27,7 +27,7 @@ namespace FarmsApi.DataModels
         public Context() : base("Farms") {
             // this.Configuration.ProxyCreationEnabled = false;
           
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<Context, FarmsApi.Migrations.Configuration>());
+           // Database.SetInitializer(new MigrateDatabaseToLatestVersion<Context, FarmsApi.Migrations.Configuration>());
           
         }
 

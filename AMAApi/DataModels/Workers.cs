@@ -152,6 +152,8 @@ namespace FarmsApi.DataModels
         public string UniqNumber { get; set; }
         public bool IsNew { get; set; }
 
+     
+
         public string ManagerName
         {
             get

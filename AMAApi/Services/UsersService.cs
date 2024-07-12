@@ -600,6 +600,13 @@ namespace FarmsApi.Services
                             var CurrentUser = GetCurrentUser();
 
                             string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
+                           
+                            // צחי עדכן שזה יישלח לעובד עצמו במידה ויש לו מייל
+                            if(!string.IsNullOrEmpty(w.Email))
+                            {
+                                MailTo = MailTo + "," + w.Email;
+                            }
+
 
 
                             SmtpClient client = new SmtpClient("82.166.0.201", 25);
@@ -610,7 +617,7 @@ namespace FarmsApi.Services
 
                             Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
 
-                            string Title = "עובדתת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
+                            string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
 
                             MailMessage actMSG = new MailMessage(
                                                     "office@ofekmanage.com",

@@ -9,9 +9,9 @@ namespace FarmsApi.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
-           AutomaticMigrationDataLossAllowed = true;
-            //ContextKey = "FarmsApi.Migrations.Configuration";
+            //AutomaticMigrationsEnabled = true;
+            //AutomaticMigrationDataLossAllowed = true;
+
         }
 
         protected override void Seed(FarmsApi.DataModels.Context context)
