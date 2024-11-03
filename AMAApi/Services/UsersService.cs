@@ -607,10 +607,14 @@ namespace FarmsApi.Services
                                 MailTo = MailTo + "," + w.Email;
                             }
 
+                            string SmtpHost = ConfigurationSettings.AppSettings["SmtpHost"].ToString();
+                            string MailUser = ConfigurationSettings.AppSettings["MailUser"].ToString();
+                            string MailPassword = ConfigurationSettings.AppSettings["MailPassword"].ToString();
 
 
-                            SmtpClient client = new SmtpClient("82.166.0.201", 25);
-                            client.Credentials = new System.Net.NetworkCredential("office@ofekmanage.com", "jadekia556"); //
+                            
+                            SmtpClient client = new SmtpClient(SmtpHost, 25);
+                            client.Credentials = new System.Net.NetworkCredential(MailUser, MailPassword); //
                             client.EnableSsl = false;
 
                             string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדתת חדשה.</div><br/>";// </html>";
@@ -622,7 +626,7 @@ namespace FarmsApi.Services
                             MailMessage actMSG = new MailMessage(
                                                     "office@ofekmanage.com",
                                                      MailTo,
-                                                    Title,
+                                                     Title,
                                                      Body);
 
 

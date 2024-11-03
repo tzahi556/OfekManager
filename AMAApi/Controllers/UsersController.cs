@@ -72,7 +72,7 @@ namespace FarmsApi.Services
             return Ok(UsersService.GetUsers(role, includeDeleted));
         }
 
-        [Authorize]
+        
         [Route("getUser/{id?}")]
         [HttpGet]
         public IHttpActionResult GetUser(int? id = null)
