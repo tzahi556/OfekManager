@@ -17,7 +17,9 @@ using System.Security.Claims;
 using System.Web;
 using System.Web.UI.WebControls;
 using System.IO.Compression;
-
+using System.Security.Cryptography;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace FarmsApi.Services
 {
@@ -337,6 +339,11 @@ namespace FarmsApi.Services
 
         }
 
+        public static string DecryptString(string Val)
+        {
+            return AesOperation.DecryptString(Val);
+        }
+
 
         //****************************************** Workers
         public static List<Files> GetFiles(int Workerid)
@@ -579,7 +586,7 @@ namespace FarmsApi.Services
 
                         if (!File.Exists(BaseLinkSite + "/Signature.png"))
                         {
-                            w.Status = "לא ניתן לשלוח ללא חתימת עובדתת";
+                            w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
                             return w;
                         }
                         else
@@ -587,7 +594,7 @@ namespace FarmsApi.Services
                             bool IsEmpty = IsBlank(BaseLinkSite + "/Signature.png");
                             if (IsEmpty)
                             {
-                                w.Status = "לא ניתן לשלוח ללא חתימת עובדתת";
+                                w.Status = "לא ניתן לשלוח ללא חתימת עובדת";
                                 return w;
                             }
                         }
@@ -617,7 +624,7 @@ namespace FarmsApi.Services
                             client.Credentials = new System.Net.NetworkCredential(MailUser, MailPassword); //
                             client.EnableSsl = false;
 
-                            string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדתת חדשה.</div><br/>";// </html>";
+                            string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
 
                             Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
 
@@ -704,7 +711,101 @@ namespace FarmsApi.Services
         }
 
 
+        public static List<Workers> SendSMS(List<Workers> WorkersItems, int IsNew)
+        {
 
+            string SiteRegisterLink = ConfigurationSettings.AppSettings["SiteRegisterLink"].ToString();
+
+            using (var Context = new Context())
+            {
+                foreach (var item in WorkersItems)
+                {
+
+                    var Phone = item.PhoneSelular;
+                    var Id = item.Id;
+                    var FullName = item.FullName;
+                    string EncryptId = AesOperation.EncryptString(Id.ToString());
+
+                    EncryptId = EncryptId.Replace("+", "@@").Replace("/","ofekslash");
+
+                    //string DecryptId = AesOperation.DecryptString(EncryptId);
+
+
+
+                    if (!string.IsNullOrEmpty(Phone) && Phone.Length > 7)
+                    {
+                        var Message = string.Format("שלום רב {0}\r\nלהשלמת הטופס ולחתימה על 101 לחץ כאן:\r\n{1}\r\n", FullName, SiteRegisterLink + EncryptId + "/");
+
+                        var res = SendSMSEndPoint(Phone, Message);
+
+                        var resObj = ResAsJson(res);
+
+                        if (resObj["success"] == "true")
+                        {
+                            item.IsSendSMS = true;
+
+                            Context.Entry(item).State = System.Data.Entity.EntityState.Modified;
+
+                        }
+                    }
+
+                }
+
+                Context.SaveChanges();
+            }
+
+            return GetWorkers(true);
+
+        }
+
+        public static dynamic ResAsJson(string jsonString)
+        {
+            dynamic jsonObj = JsonConvert.DeserializeObject<dynamic>(jsonString);
+
+            return jsonObj;
+
+
+        }
+        private static string SendSMSEndPoint(string Phone, string message)
+        {
+
+            if (string.IsNullOrEmpty(Phone) || string.IsNullOrEmpty(message)) return "{'success':'false','message':'no Phone or no message sent.'}";
+
+
+            RestSharp.RestClient val = new RestSharp.RestClient("https://api.multisend.co.il/v2/sendsms")
+            {
+
+                Timeout = -1
+
+            };
+
+            RestSharp.RestRequest val2 = new RestSharp.RestRequest((RestSharp.Method)1);
+
+            val2.AddHeader("Content-Type", "multipart/form-data; boundary=--------------------------486507896899304374172095");
+
+            //val2.AlwaysMultipartFormData = true;
+
+            val2.AddParameter("user", (object)"shmiatech");
+
+            val2.AddParameter("password", (object)"shmiatech@01");
+
+            val2.AddParameter("from", (object)"101Form");
+
+            val2.AddParameter("recipient", (object)Phone);
+
+            val2.AddParameter("message", (object)message);
+
+            val2.AddParameter("message_type", (object)"SMS");
+
+            RestSharp.IRestResponse val3 = val.Execute((RestSharp.IRestRequest)(object)val2);
+
+            return val3.Content;
+
+
+
+            //InsertLog("INFO", "SendSmsTtsNew - " + message_type, Phone, "Response: " + val3.Content);
+
+        }
 
         public static bool IsBlank(string imageFileName)
         {
@@ -1070,10 +1171,24 @@ namespace FarmsApi.Services
 
         public static User GetCurrentUser()
         {
-            var identity = HttpContext.Current.User.Identity as ClaimsIdentity;
-            var Email = identity.Claims.SingleOrDefault(c => c.Type == "sub").Value;
+            //var identity = HttpContext.Current.User.Identity as ClaimsIdentity;
+            //var Email = identity.Claims.SingleOrDefault(c => c.Type == "sub").Value;
 
+            //return GetUser(GetUserIdByEmail(Email));
+
+            //StackTrace stackTrace = new StackTrace();
+            //// Get calling method name
+            //Console.WriteLine(stackTrace.GetFrame(1).GetMethod().Name);
+
+            var identity = HttpContext.Current.User.Identity as ClaimsIdentity;
+
+            if (identity.Claims.Count() == 0)
+                return GetUser(GetUserIdByEmail("default@gmail.com"));
+
+            var Email = identity.Claims.SingleOrDefault(c => c.Type == "sub").Value;
             return GetUser(GetUserIdByEmail(Email));
+
+
         }
 
         public static void RegisterDevice(string token)
@@ -1279,5 +1394,63 @@ namespace FarmsApi.Services
 
 
         #endregion
+    }
+
+
+
+    public class AesOperation
+    {
+        public static string key = "b14ca5898a4e4133bbce2ea2315a1916";
+        public static string EncryptString(string plainText)
+        {
+            byte[] iv = new byte[16];
+            byte[] array;
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.IV = iv;
+
+                ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
+                    {
+                        using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
+                        {
+                            streamWriter.Write(plainText);
+                        }
+
+                        array = memoryStream.ToArray();
+                    }
+                }
+            }
+
+            return Convert.ToBase64String(array);
+        }
+        public static string DecryptString(string cipherText)
+        {
+            byte[] iv = new byte[16];
+            byte[] buffer = Convert.FromBase64String(cipherText);
+
+            using (Aes aes = Aes.Create())
+            {
+                aes.Key = Encoding.UTF8.GetBytes(key);
+                aes.IV = iv;
+                ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                using (MemoryStream memoryStream = new MemoryStream(buffer))
+                {
+                    using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
+                    {
+                        using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
+                        {
+                            return streamReader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+        }
     }
 }

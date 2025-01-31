@@ -114,24 +114,24 @@
             url: '/worker/{id}/',
             views: {
                 'main': {
-                    template: '<worker worker="$ctrl.worker" files="$ctrl.files" childs="$ctrl.childs" cities="$ctrl.cities" banks="$ctrl.banks"  banksbrunchs="$ctrl.banksbrunchs" ></worker>',
-                    controller: function (worker, files, childs, cities, banks, banksbrunchs) {
+                    template: '<worker users="$ctrl.users" worker="$ctrl.worker" files="$ctrl.files" childs="$ctrl.childs" cities="$ctrl.cities" banks="$ctrl.banks"  banksbrunchs="$ctrl.banksbrunchs" isworker="$ctrl.isworker" ></worker>',
+                    controller: function (worker, files, childs, cities, banks, banksbrunchs, users, isworker) {
                         this.worker = worker;
                         this.files = files;
                         this.childs = childs;
                         this.cities = cities;
                         this.banks = banks;
                         this.banksbrunchs = banksbrunchs;
+                        this.users = users;
+                        this.isworker = isworker;
 
                     },
                     controllerAs: '$ctrl',
                     resolve: {
                         worker: function (usersService, $stateParams) {
-
                             return usersService.getWorker($stateParams.id);
                         },
                         files: function (usersService, $stateParams) {
-
                             return usersService.getFiles($stateParams.id);
                         },
                         childs: function (usersService, $stateParams) {
@@ -150,11 +150,17 @@
                         banksbrunchs: function (usersService, $stateParams) {
 
                             return usersService.getMasterTable(3);
+                        },
+
+                        users: function (usersService) {
+                            if (localStorage.getItem('currentRole') == "farmAdmin")
+                                return usersService.getUsers("instructor");
+                        },
+
+                        isworker: function (usersService, $stateParams) {
+                           
+                            return typeof $stateParams.id === "string" && Number.isNaN(parseFloat($stateParams.id));
                         }
-
-
-
-
 
 
 
@@ -164,6 +170,60 @@
                 }
             }
         });
+        //$stateProvider.state('worker', {
+        //    url: '/worker/{id}/',
+        //    views: {
+        //        'main': {
+        //            template: '<worker worker="$ctrl.worker" files="$ctrl.files" childs="$ctrl.childs" cities="$ctrl.cities" banks="$ctrl.banks"  banksbrunchs="$ctrl.banksbrunchs" ></worker>',
+        //            controller: function (worker, files, childs, cities, banks, banksbrunchs) {
+        //                this.worker = worker;
+        //                this.files = files;
+        //                this.childs = childs;
+        //                this.cities = cities;
+        //                this.banks = banks;
+        //                this.banksbrunchs = banksbrunchs;
+
+        //            },
+        //            controllerAs: '$ctrl',
+        //            resolve: {
+        //                worker: function (usersService, $stateParams) {
+
+        //                    return usersService.getWorker($stateParams.id);
+        //                },
+        //                files: function (usersService, $stateParams) {
+
+        //                    return usersService.getFiles($stateParams.id);
+        //                },
+        //                childs: function (usersService, $stateParams) {
+
+        //                    return usersService.getWorkerChilds($stateParams.id);
+        //                },
+
+        //                cities: function (usersService, $stateParams) {
+
+        //                    return usersService.getMasterTable(1);
+        //                },
+        //                banks: function (usersService, $stateParams) {
+
+        //                    return usersService.getMasterTable(2);
+        //                },
+        //                banksbrunchs: function (usersService, $stateParams) {
+
+        //                    return usersService.getMasterTable(3);
+        //                }
+
+
+
+
+
+
+
+
+
+        //            }
+        //        }
+        //    }
+        //});
 
         $stateProvider.state('workernew', {
             url: '/workernew/{id}/',

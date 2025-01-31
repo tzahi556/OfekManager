@@ -1,7 +1,9 @@
 ﻿using FarmsApi.DataModels;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web.Http;
 
@@ -151,12 +153,45 @@ namespace FarmsApi.Services
 
 
         //******************************************** Workers *****************************
-        [Authorize]
+        //[Authorize]
+        //[Route("getFiles/{workerid}")]
+        //[HttpGet]
+        //public IHttpActionResult GetFiles(int Workerid)
+        //{
+        //    return Ok(UsersService.GetFiles(Workerid));
+        //}
+
+        //[Authorize]
+        //[Route("getWorkers/{isnew}")]
+        //[HttpGet]
+        //public IHttpActionResult GetWorkers(bool isnew)
+        //{
+        //    return Ok(UsersService.GetWorkers(isnew));
+        //}
+
+        //[Authorize]
+        //[Route("getWorker/{id}")]
+        //[HttpGet]
+        //public IHttpActionResult GetWorker(int id)
+        //{
+        //    return Ok(UsersService.GetWorker(id));
+        //}
+
         [Route("getFiles/{workerid}")]
         [HttpGet]
-        public IHttpActionResult GetFiles(int Workerid)
+        public IHttpActionResult GetFiles(string Workerid)
         {
-            return Ok(UsersService.GetFiles(Workerid));
+
+            string res = Workerid;
+
+            if (Regex.Matches(Workerid, @"[a-zA-Z]").Count > 0)
+            {
+               
+                Workerid = Workerid.Replace("@@", "+").Replace("ofekslash", "/");
+                res = UsersService.DecryptString(Workerid);
+            }
+            return Ok(UsersService.GetFiles(Convert.ToInt32(res)));
+            //return Ok(UsersService.GetFiles(Workerid));
         }
 
         [Authorize]
@@ -167,13 +202,23 @@ namespace FarmsApi.Services
             return Ok(UsersService.GetWorkers(isnew));
         }
 
-        [Authorize]
+        // [Authorize]
         [Route("getWorker/{id}")]
         [HttpGet]
-        public IHttpActionResult GetWorker(int id)
+        public IHttpActionResult GetWorker(string id)
         {
-            return Ok(UsersService.GetWorker(id));
+            string res = id;
+
+            if (Regex.Matches(id, @"[a-zA-Z]").Count > 0)
+            {
+                id = id.Replace("@@", "+").Replace("ofekslash", "/");
+                res = UsersService.DecryptString(id);
+            }
+            return Ok(UsersService.GetWorker(Convert.ToInt32(res)));
         }
+
+
+
 
         [Authorize]
         [Route("deleteWorker/{id}/{isnew}")]
@@ -185,17 +230,31 @@ namespace FarmsApi.Services
         }
 
 
-        [Authorize]
+        //[Authorize]
+        //[Route("getWorkerChilds/{id}")]
+        //[HttpGet]
+        //public IHttpActionResult GetWorkerChilds(int id)
+        //{
+
+        //    return Ok(UsersService.GetWorkerChilds(id));
+        //}
+
         [Route("getWorkerChilds/{id}")]
         [HttpGet]
-        public IHttpActionResult GetWorkerChilds(int id)
+        public IHttpActionResult GetWorkerChilds(string id)
         {
+            string res = id;
 
-            return Ok(UsersService.GetWorkerChilds(id));
+            if (Regex.Matches(id, @"[a-zA-Z]").Count > 0)
+            {
+                id = id.Replace("@@", "+").Replace("ofekslash", "/");
+                res = UsersService.DecryptString(id);
+            }
+            return Ok(UsersService.GetWorkerChilds(Convert.ToInt32(res)));
         }
 
 
-        [Authorize]
+        //[Authorize]
         [Route("updateWorker/{type}")]
         [HttpPost]
         public IHttpActionResult UpdateWorkerAndFiles(JArray dataobj, int type)
@@ -203,7 +262,7 @@ namespace FarmsApi.Services
             return Ok(UsersService.UpdateWorkerAndFiles(dataobj, type));
         }
 
-        [Authorize]
+        //[Authorize]
         [Route("setUserDevice")]
         [HttpPost]
         public IHttpActionResult SetUserDevice(JObject dataobj)
@@ -214,12 +273,21 @@ namespace FarmsApi.Services
         }
 
 
+        [Authorize]
+        [Route("sendSMS/{IsNew}")]
+        [HttpPost]
+        public IHttpActionResult SendSMS(List<DataModels.Workers> WorkersItems, int IsNew)
+        {
+
+            return Ok(UsersService.SendSMS(WorkersItems, IsNew));
+
+        }
 
 
 
         //******************************************** End Workers *****************************
         //******************************************** Master Table *****************************
-        [Authorize]
+        //[Authorize]
         [Route("getMasterTable/{type}")]
         [HttpGet]
         public IHttpActionResult GetMasterTable(int type)

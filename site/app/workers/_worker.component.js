@@ -2,7 +2,7 @@
 
     var app = angular.module('app');
 
-   // https://test.dgtracking.co.il/#/worker/1880/
+
 
     app.component('worker', {
         templateUrl: 'app/workers/worker.template.html?v=3',
@@ -13,10 +13,7 @@
             childs: '<',
             cities: '<',
             banks: '<',
-            banksbrunchs: '<',
-            users: '<',
-            isworker: '<'
-            
+            banksbrunchs: '<'
 
         }
     });
@@ -29,12 +26,8 @@
         this.roles = usersService.roles;
         this.delete = _delete.bind(this);
         // this.selfEdit = angular.fromJson(localStorage.getItem('authorizationData')).userName == this.user.Email;
-        this.role = (this.isworker)?"student":localStorage.getItem('currentRole');
-        this.farmStyle = 1;//localStorage.getItem('FarmStyle');
-        // 1 זה נועד לשירן כי היא רוצה רק חתימה של העובדת
+        this.role = localStorage.getItem('currentRole');
 
-       
-      
         this.uploadFile = _uploadFile.bind(this);
         this.uploadFileParud = _uploadFileParud.bind(this);
         this.uploadFileZikuyNeke = _uploadFileZikuyNeke.bind(this);
@@ -76,16 +69,14 @@
        // this.image;
         this.init();
         function _init() {
-
-
-           // (this.isworker);
+           
             var obj = this.worker;
          //   this.image = this.uploadsUri + "/" + this.worker.Id + "/Signature.png";
-            
+             debugger
             if (!this.worker.ShnatMas)
                 this.worker.ShnatMas = moment().format('YYYY');
 
-                 Object.keys(obj).forEach(function (key, index) {
+            Object.keys(obj).forEach(function (key, index) {
 
               
 
@@ -242,32 +233,21 @@
         }
 
         function _uploadFile(file) {
-
-           
-            if (file == "NoTaz") {
-
-                alertMessage("יש למלא תעודה זהות בשדה המיועד לכך!");
-                return;
-            }
-
-
-            if (!file) {
-
-                alertMessage("יש להעלות תעודה זהות בהירה ותקינה!");
-
-                return;
-            }
-
             this.tazfiles = this.tazfiles || [];
             var allfiles = file.split(",") || [];
 
-          
+
             for (var i in allfiles) {
                 var Obj = { "Id": 0, "Type": 1, "FileName": allfiles[i] };
                 this.files.push(Obj);
                 this.tazfiles.push(Obj);
             }
-            
+            // 
+            //if (file) {
+            //    var Obj = { "Id": 0, "HorseId": 22, "FileName": file };
+            //    this.files.push(Obj);
+
+            //}
         }
 
         function _uploadFileParud(file) {
@@ -588,15 +568,7 @@
 
                 if (type == 1) {
 
-                    if (this.scope.workerForm.$valid && this.tazfiles.length > 0) {
 
-                        obj["IsValid"] = true;
-
-
-                    } else {
-                        obj["IsValid"] = false;
-                         
-                    }
 
                     //$.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע שומרים את הנתונים  <br/>אנא המתנ/י...</div></h5>' });
 
@@ -618,9 +590,6 @@
 
                     usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
                         //  this.worker = worker;
-
-
-                       
                         alertMessage('הנתונים נשמרו בהצלחה!');
                         // $.unblockUI();
                         //
@@ -688,7 +657,7 @@
                     }
 
                     else {
-                        alertMessage("יש למלא את כל השדות המסומנים באדום , אלו שדות חובה",3);
+                        alertMessage("יש למלא את כל השדות המסומנים באדום , אלו שדות חובה");
 
                     }
 
