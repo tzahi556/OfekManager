@@ -52,33 +52,40 @@ namespace FarmsApi.Controllers
 
             if (folder.Contains("taz_"))
             {
-                string credential_path = tempRoot + "CrediJson/cerdi.json";   //HttpContext.Current.Server.MapPath("~/Uploads/CrediJson/cerdi.json");
-                // יצירת סרביס אקאונט ואז יצירת מפתח ולהוריד את הגייסון
-                System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credential_path);
 
 
-                bool IsImageTazOk = false;
 
-                for (int i = 0; i < file.FileData.Count; i++)
-                {
-                    var source = file.FileData[i].LocalFileName;
 
-                    var client = ImageAnnotatorClient.Create();
-                    var image = Image.FromFile(source); //FromUri("https://ofekmanage.com/api/uploads/5397/%D7%9E%D7%99%D7%A8%D7%91%20%D7%9E%D7%98%D7%A8%D7%99%20%D7%AA.%D7%96.jpg");
-                    var labels = client.DetectText(image);
+                //string credential_path = tempRoot + "CrediJson/cerdi.json";   //HttpContext.Current.Server.MapPath("~/Uploads/CrediJson/cerdi.json");
+                //// יצירת סרביס אקאונט ואז יצירת מפתח ולהוריד את הגייסון
+                //System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", credential_path);
 
-                    string Taz = folder.Replace("taz_", "");
 
-                    if (string.IsNullOrEmpty(Taz) || Taz == "null") return Ok("NoTaz");
+                //bool IsImageTazOk = false;
+                bool IsImageTazOk = true;
 
-                    var LabelContainsTaz = labels.Where(x => x.Description.Length >= 7 && Taz.Contains(x.Description)).ToList();
 
-                    if (LabelContainsTaz.Count > 0)
-                    {
-                        IsImageTazOk = true;
-                    }
 
-                }
+                //for (int i = 0; i < file.FileData.Count; i++)
+                //{
+                //    var source = file.FileData[i].LocalFileName;
+
+                //    var client = ImageAnnotatorClient.Create();
+                //    var image = Image.FromFile(source); //FromUri("https://ofekmanage.com/api/uploads/5397/%D7%9E%D7%99%D7%A8%D7%91%20%D7%9E%D7%98%D7%A8%D7%99%20%D7%AA.%D7%96.jpg");
+                //    var labels = client.DetectText(image);
+
+                //    string Taz = folder.Replace("taz_", "");
+
+                //    if (string.IsNullOrEmpty(Taz) || Taz == "null") return Ok("NoTaz");
+
+                //    var LabelContainsTaz = labels.Where(x => x.Description.Length >= 7 && Taz.Contains(x.Description)).ToList();
+
+                //    if (LabelContainsTaz.Count > 0)
+                //    {
+                //        IsImageTazOk = true;
+                //    }
+
+                //}
 
                 if (!IsImageTazOk)
                 {
@@ -255,7 +262,7 @@ namespace FarmsApi.Controllers
                 MailMessage actMSG = new MailMessage(
                                         "office@ofekmanage.com",
                                          MailTo,
-                                        Title,
+                                         Title,
                                          Body);
 
 

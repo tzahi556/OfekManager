@@ -194,13 +194,6 @@ namespace FarmsApi.Services
             //return Ok(UsersService.GetFiles(Workerid));
         }
 
-        [Authorize]
-        [Route("getWorkers/{isnew}")]
-        [HttpGet]
-        public IHttpActionResult GetWorkers(bool isnew)
-        {
-            return Ok(UsersService.GetWorkers(isnew));
-        }
 
         // [Authorize]
         [Route("getWorker/{id}")]
@@ -217,6 +210,31 @@ namespace FarmsApi.Services
             return Ok(UsersService.GetWorker(Convert.ToInt32(res)));
         }
 
+        [Route("getWorkerChilds/{id}")]
+        [HttpGet]
+        public IHttpActionResult GetWorkerChilds(string id)
+        {
+            string res = id;
+
+            if (Regex.Matches(id, @"[a-zA-Z]").Count > 0)
+            {
+                id = id.Replace("@@", "+").Replace("ofekslash", "/");
+                res = UsersService.DecryptString(id);
+            }
+            return Ok(UsersService.GetWorkerChilds(Convert.ToInt32(res)));
+        }
+
+
+
+        [Authorize]
+        [Route("getWorkers/{isnew}")]
+        [HttpGet]
+        public IHttpActionResult GetWorkers(bool isnew, int page = 1, int pageSize = 10,string filterText=null)
+        {
+            return Ok(UsersService.GetWorkers(isnew,page, pageSize, filterText));
+        }
+
+     
 
 
 
@@ -239,19 +257,19 @@ namespace FarmsApi.Services
         //    return Ok(UsersService.GetWorkerChilds(id));
         //}
 
-        [Route("getWorkerChilds/{id}")]
-        [HttpGet]
-        public IHttpActionResult GetWorkerChilds(string id)
-        {
-            string res = id;
+        //[Route("getWorkerChilds/{id}")]
+        //[HttpGet]
+        //public IHttpActionResult GetWorkerChilds(string id)
+        //{
+        //    string res = id;
 
-            if (Regex.Matches(id, @"[a-zA-Z]").Count > 0)
-            {
-                id = id.Replace("@@", "+").Replace("ofekslash", "/");
-                res = UsersService.DecryptString(id);
-            }
-            return Ok(UsersService.GetWorkerChilds(Convert.ToInt32(res)));
-        }
+        //    if (Regex.Matches(id, @"[a-zA-Z]").Count > 0)
+        //    {
+        //        id = id.Replace("@@", "+").Replace("ofekslash", "/");
+        //        res = UsersService.DecryptString(id);
+        //    }
+        //    return Ok(UsersService.GetWorkerChilds(Convert.ToInt32(res)));
+        //}
 
 
         //[Authorize]
@@ -274,12 +292,12 @@ namespace FarmsApi.Services
 
 
         [Authorize]
-        [Route("sendSMS/{IsNew}")]
+        [Route("sendSMS")]
         [HttpPost]
-        public IHttpActionResult SendSMS(List<DataModels.Workers> WorkersItems, int IsNew)
+        public IHttpActionResult SendSMS(List<DataModels.Workers> WorkersItems, int Type, int IsNew, int page = 1, int pageSize = 10, string filterText = null)
         {
 
-            return Ok(UsersService.SendSMS(WorkersItems, IsNew));
+            return Ok(UsersService.SendSMS(WorkersItems, Type, IsNew, page,pageSize, filterText));
 
         }
 

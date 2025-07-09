@@ -11,8 +11,21 @@
         <a class="btn btn-success btn-xs" ui-sref="worker({id:0})">עובד חדש</a>
 
         <button class="btn btn-danger btn-xs" style="float:left" ng-click="$ctrl.deleteAll()">מחיקת מסומנים</button>
-       
-        <button ng-if="$ctrl.role!='instructor'" class="btn btn-success btn-xs" style="float:left;margin-left:10px;" ng-click="$ctrl.sendSMS()">שליחת SMS למסומנים</button>
+
+        <!--<button ng-if="$ctrl.role!='instructor'" class="btn btn-success btn-xs" style="float:left;margin-left:10px;" ng-click="$ctrl.sendSMS()">שליחת SMS למסומנים</button>-->
+
+        <div class="tooltip-container" style="float:left;margin-left:10px;">
+            <button class="btn btn-success btn-xs" >שליחת קישור למסומנים</button>
+            <div class="tooltip-text">
+                <i class="icon icon-sms" ng-click="$ctrl.sendSMS(1)"></i>
+                <i class="icon icon-email" ng-click="$ctrl.sendSMS(2)"></i>
+                <!--<i class="icon icon-whatsapp" title="באופציה זו יש לבחור עובד/ת בודד/ת" ng-click="$ctrl.sendSMS(3)"></i>-->
+
+            </div>
+        </div>
+
+
+
     </div>
     <div class="table-responsive">
 
@@ -26,7 +39,7 @@
                     <th>אימייל</th>
                     <th>ת.עדכון</th>
                     <th>סטטוס</th>
-                    <th>SMS</th>
+                    <th>SMS/Mail</th>
                     <th>PDF</th>
                     <th></th>
                     <th></th>
@@ -35,11 +48,13 @@
             </thead>
             <tbody>
                 <tr>
-                    <td colspan="10">
-                        <input type="text" class="form-control"  ng-model="$ctrl.filter.$" placeholder="חיפוש חופשי" />
+                    <td colspan="12">
+                        <input type="text" class="form-control" ng-model="$ctrl.filterText" placeholder="חיפוש חופשי" ng-change="$ctrl.onSearchChange()" />
                     </td>
                 </tr>
-                <tr ng-repeat="worker in $ctrl.workers | filter:$ctrl.filter">
+                <tr ng-repeat="worker in $ctrl.workers.Items ">
+                    <!--| filter:$ctrl.filter-->
+
 
                     <td>{{worker.ManagerName}}</td>
                     <td>{{worker.FirstName}}</td>
@@ -54,7 +69,85 @@
                     <td width="5%"><input style="width:52px;height:20px" type="checkbox" ng-model="worker.IsSelected" /></td>
 
                 </tr>
+                <tr>
+                    <td colspan="12" style="text-align:center; padding:10px;">
+                        סך הכול: <strong>{{ $ctrl.workers.TotalCount | number }}</strong> רשומות
+                    </td>
+                </tr>
             </tbody>
         </table>
+
+
+
+        <style>
+            .pagination > li > button.page-link {
+                position: relative;
+                float: right;
+                padding: 6px 12px;
+                margin-left: -1px;
+                line-height: 1.42857143;
+                color: #337ab7;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                cursor: pointer;
+            }
+
+            .pagination > li.active > button.page-link {
+                z-index: 2;
+                color: #fff;
+                background-color: #337ab7;
+                border-color: #337ab7;
+            }
+
+            .pagination > li.disabled > button.page-link {
+                color: #777;
+                background-color: #fff;
+                border-color: #ddd;
+                cursor: not-allowed;
+            }
+
+            .pagination > li > button.page-link:focus {
+                outline: none;
+            }
+        </style>
+
+        <div class="text-center">
+            <ul class="pagination pagination-sm">
+
+                <!-- ראשון -->
+                <li ng-class="{disabled: $ctrl.currentPage === 1}">
+                    <button class="page-link" ng-click="$ctrl.goToFirstPage()" ng-disabled="$ctrl.currentPage === 1">ראשון</button>
+                </li>
+
+                <!-- קודם -->
+                <li ng-class="{disabled: $ctrl.currentPage === 1}">
+                    <button class="page-link" ng-click="$ctrl.goToPreviousPage()" ng-disabled="$ctrl.currentPage === 1">&laquo;</button>
+                </li>
+
+                <!-- מספרי עמודים -->
+                <li ng-repeat="n in $ctrl.getPages() track by $index"
+                    ng-class="{active: n === $ctrl.currentPage, disabled: n === '...'}">
+                    <button class="page-link"
+                            ng-click="$ctrl.goToPage(n)"
+                            ng-disabled="n === '...'">
+                        {{n}}
+                    </button>
+                </li>
+
+                <!-- הבא -->
+                <li ng-class="{disabled: $ctrl.currentPage === $ctrl.totalPages()}">
+                    <button class="page-link" ng-click="$ctrl.goToNextPage()" ng-disabled="$ctrl.currentPage === $ctrl.totalPages()">&raquo;</button>
+                </li>
+
+                <!-- אחרון -->
+                <li ng-class="{disabled: $ctrl.currentPage === $ctrl.totalPages()}">
+                    <button class="page-link" ng-click="$ctrl.goToLastPage()" ng-disabled="$ctrl.currentPage === $ctrl.totalPages()">אחרון</button>
+                </li>
+
+            </ul>
         </div>
+
+
+
     </div>
+</div>

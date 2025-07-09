@@ -65,7 +65,7 @@
 
             ]);
 
-            this.workers.forEach(function (worker) {
+            this.workers.Items.forEach(function (worker) {
                 data.push([
                     worker.Taz,
                     (worker.Gender == 1) ? "זכר" : "נקבה",
@@ -268,7 +268,7 @@
         function _checkAll() {
 
 
-            this.workers.forEach(x => x.IsSelected = this.checkAllc);
+            this.workers.Items.forEach(x => x.IsSelected = this.checkAllc);
         }
 
 
@@ -285,7 +285,7 @@
             if (confirm('האם למחוק את כל העובדים המסומנים?')) {
 
 
-                var selected = this.workers.filter(x => x.IsSelected);
+                var selected = this.workers.Items.filter(x => x.IsSelected);
 
                 for (var i in selected) {
                     var ctrl = this;
@@ -318,7 +318,7 @@
             }
         }
 
-        function _sendSMS() {
+        function _sendSMS(type) {
 
 
 
@@ -326,7 +326,7 @@
             var ctrl = this;
 
            // var selected = this.workers.filter(x => x.IsSelected && (x.IsValid || this.farmStyle != 1));
-            var selected = this.workers.filter(x => x.IsSelected);
+            var selected = this.workers.Items.filter(x => x.IsSelected);
 
             ctrl.checkAllc = false;
             ctrl.checkAll();
@@ -337,13 +337,13 @@
             }
 
             if (selected.length > 0)
-                if (confirm('האם לשלוח SMS לכל העובדים המסומנים?')) {
+                if (confirm('האם לשלוח SMS/Mail לכל העובדים המסומנים?')) {
 
 
 
 
-                    usersService.sendSMS(selected, 1).then(function (res) {
-
+                    usersService.sendSMS(selected,1,ctrl.currentPage, ctrl.pageSize, ctrl.filterText,type).then(function (res) {
+                       
 
                         ctrl.workers = res;
                         ctrl.checkAllc = false;
@@ -356,6 +356,128 @@
                 }
 
         }
+
+
+        this.currentPage = 1;
+        this.pageSize = 10;
+
+        this.getPagedWorkers = function () {
+            var start = (this.currentPage - 1) * this.pageSize;
+            return this.workers.Items.slice(start, start + this.pageSize);
+        };
+
+        this.totalPages = function () {
+            return Math.ceil(this.workers.TotalCount / this.pageSize);
+        };
+
+
+        this.getPages = function () {
+            const total = this.totalPages();
+            const current = this.currentPage;
+            const delta = 3; // כמה עמודים לפני ואחרי להציג
+
+            const range = [];
+            const rangeWithDots = [];
+            let l;
+
+            for (let i = 1; i <= total; i++) {
+                if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+                    range.push(i);
+                }
+            }
+
+            for (let i of range) {
+                if (l) {
+                    if (i - l === 2) {
+                        rangeWithDots.push(l + 1);
+                    } else if (i - l > 1) {
+                        rangeWithDots.push('...');
+                    }
+                }
+                rangeWithDots.push(i);
+                l = i;
+            }
+
+            return rangeWithDots;
+        };
+
+
+        this.onSearchChange = function () {
+            if (this.filterText && this.filterText.length >= 2) {
+                this.currentPage = 1;
+
+               // alert(this.filterText);
+               this.loadWorkers();
+            }
+
+            // אם המשתמש מחק את הכל – נטען הכול מחדש (אופציונלי)
+            if (!this.filterText || this.filterText.length === 0) {
+                this.currentPage = 1;
+                this.loadWorkers();
+            }
+        };
+
+
+
+
+
+
+        this.loadWorkers = function () {
+
+            //alert(this.currentPage);
+
+            var ctrl = this;
+           
+            usersService.getWorkers(true, ctrl.currentPage, ctrl.pageSize, ctrl.filterText).then(function (res) {
+
+                
+                ctrl.workers = res;
+                //ctrl.getPagedWorkers();
+            });
+
+
+            //var start = (this.currentPage - 1) * this.pageSize;
+            //return this.workers.Items.slice(start, start + this.pageSize);
+             
+        }
+
+
+        this.goToFirstPage = function () {
+            if (this.currentPage > 1) {
+                this.currentPage = 1;
+                this.loadWorkers();
+            }
+        };
+
+        this.goToLastPage = function () {
+            if (this.currentPage < this.totalPages()) {
+                this.currentPage = this.totalPages();
+                this.loadWorkers();
+            }
+        };
+
+        this.goToPage = function (n) {
+            if (n !== '...' && n !== this.currentPage) {
+                this.currentPage = n;
+                this.loadWorkers();
+            }
+        };
+
+        this.goToNextPage = function () {
+            if (this.currentPage < this.totalPages()) {
+                this.currentPage++;
+                this.loadWorkers();
+            }
+        };
+
+        this.goToPreviousPage = function () {
+            if (this.currentPage > 1) {
+                this.currentPage--;
+                this.loadWorkers();
+            }
+        };
+
+
     }
 
 })();

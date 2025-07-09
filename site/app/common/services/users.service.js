@@ -147,17 +147,21 @@
 
 
 
-        function _getWorkers(isnew) {
+        function _getWorkers(isnew, page, pageSize, filterText) {
             
-            ///if (isnew == -1) isnew = true;
+            
             var deferred = $q.defer();
-         
-            $http.get(sharedValues.apiUrl + 'users/getWorkers/' + isnew).then(function (res) {
-               
-                var res = res.data;
-                deferred.resolve(res);
 
+            $http.get(sharedValues.apiUrl + 'users/getWorkers/' + isnew, {
+                params: {
+                    page: page,
+                    pageSize: pageSize,
+                    filterText: filterText
+                }
+            }).then(function (res) {
+                deferred.resolve(res.data);
             });
+
             return deferred.promise;
         }
 
@@ -188,10 +192,22 @@
         }
 
 
-        function _sendSMS(workers, isnew) {
+        function _sendSMS(workers, isnew, page, pageSize, filterText,type) {
 
+            if (!filterText) filterText = null;
+            if (!type) type = 1;
             var deferred = $q.defer();
-            $http.post(sharedValues.apiUrl + 'users/sendSMS/' + isnew, workers).then(function (res) {
+            $http.post(sharedValues.apiUrl + 'users/sendSMS/', workers,
+                {
+                    params: {
+                        type: type,
+                        isnew: isnew,
+                        page: page,
+                        pageSize: pageSize,
+                        filterText: filterText
+                    }
+                })
+            .then(function (res) {
                 var res = res.data;
                 deferred.resolve(res);
             });

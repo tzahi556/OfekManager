@@ -1,5 +1,6 @@
 ﻿using FarmsApi.DataModels;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,16 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Security.Claims;
-using System.Web;
-using System.Web.UI.WebControls;
-using System.IO.Compression;
 using System.Security.Cryptography;
 using System.Text;
-using Newtonsoft.Json;
+using System.Web;
+using System.Web.Http;
+using System.Web.UI.WebControls;
 
 namespace FarmsApi.Services
 {
@@ -362,9 +363,10 @@ namespace FarmsApi.Services
             }
         }
 
-        public static List<Workers> GetWorkers(bool isnew)
+        public static WorkersResult GetWorkers(bool isnew, int page, int pageSize,string filterText=null)
         {
-
+            //לטפל SendSMS
+            //לטפל DeleteWorker בפגינג החדש
 
             using (var Context = new Context())
             {
@@ -415,22 +417,58 @@ namespace FarmsApi.Services
                     }
 
 
-                    var WorkersList = Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew && x.UserId == CurrentUserId).OrderByDescending(x => x.DateRigster).ToList();
 
-                    return WorkersList;
+
+                    var totalCount = Context.Workers.Where(x => x.IsNew == isnew &&
+                                                   (filterText == null || ((x.FirstName + " " + x.LastName).Contains(filterText) || x.Taz.Contains(filterText) || x.Phone.Contains(filterText) || (x.UserManager.FirstName + " " + x.UserManager.LastName).Contains(filterText))) &&
+                                                    x.UserId == CurrentUserId).Count(); // או לפי Date
+
+                    var WorkersList = Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew &&
+                                                                                          (filterText == null || ((x.FirstName + " " + x.LastName).Contains(filterText) || x.Taz.Contains(filterText) || x.Phone.Contains(filterText) || (x.UserManager.FirstName + " " + x.UserManager.LastName).Contains(filterText))) &&
+                                                                                             x.UserId == CurrentUserId).OrderByDescending(x => x.DateRigster)
+
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+
+
+                    WorkersResult workersResult = new WorkersResult();
+                    workersResult.TotalCount = totalCount;
+                    workersResult.Items = WorkersList;
+
+                    return workersResult;
+
+
+                   // return WorkersList;
                 }
                 else
                 {
-                    //Context.Configuration.LazyLoadingEnabled = false;
+                   
 
-                    // var Demo = Context.Workers.Include(x=>x.UserManager).ToList();
+                  //  return Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew && (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster).ToList();
 
-                    //var movieList = Context.Workers
-                    //             .Include()   // ADD THIS INCLUDE
-                    //             .ToList();
 
-                    return Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew && (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster).ToList();
 
+                    var totalCount = Context.Workers.Where(x => x.IsNew == isnew &&
+                     (filterText == null || ((x.FirstName + " " + x.LastName).Contains(filterText) || x.Taz.Contains(filterText) || x.Phone.Contains(filterText) || (x.UserManager.FirstName + " " + x.UserManager.LastName).Contains(filterText))) &&
+                     (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).Count(); // או לפי Date
+
+                   // var totalCount = query.Count();
+
+                    var items = Context.Workers.Include(x => x.UserManager).Where(x => x.IsNew == isnew &&
+                                                                                (filterText==null || ((x.FirstName + " " + x.LastName).Contains(filterText) || x.Taz.Contains(filterText) || x.Phone.Contains(filterText) || (x.UserManager.FirstName + " " + x.UserManager.LastName).Contains(filterText))) &&
+                                                                                (!string.IsNullOrEmpty(x.FirstName.Trim()) || !string.IsNullOrEmpty(x.LastName.Trim()) || !string.IsNullOrEmpty(x.Taz.Trim()))).OrderByDescending(x => x.DateRigster)
+                        .Skip((page - 1) * pageSize)
+                        .Take(pageSize)
+                        .ToList();
+
+
+                    WorkersResult workersResult = new WorkersResult();
+                    workersResult.TotalCount = totalCount;
+                    workersResult.Items = items;
+
+                    return workersResult;
                 }
 
             }
@@ -505,10 +543,7 @@ namespace FarmsApi.Services
         }
 
 
-
-
-
-        public static List<Workers> DeleteWorker(int Id, bool isnew)
+        public static WorkersResult DeleteWorker(int Id, bool isnew)
         {
             using (var Context = new Context())
             {
@@ -525,7 +560,7 @@ namespace FarmsApi.Services
                 DeleteDirectory(Id.ToString());
 
 
-                return GetWorkers(isnew);
+                return GetWorkers(isnew,1,10);
             }
         }
 
@@ -624,14 +659,14 @@ namespace FarmsApi.Services
                             client.Credentials = new System.Net.NetworkCredential(MailUser, MailPassword); //
                             client.EnableSsl = false;
 
-                            string Body = "<html dir='rtl'><div style='text-align:right'><b>שלום רב,</b>" + "<br/>" + "מצ''ב קובץ עובדת חדשה.</div><br/>";// </html>";
+                            string Body = "<html dir='rtl'><div style='text-align:right'><b>,שלום רב</b>" + "<br/>" + ".מצ''ב קובץ עובדת חדשה<br/>";// </html>";
 
-                            Body += " מנהל אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</html>";
+                            Body += " מנהל/ת אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</div></html>";
 
-                            string Title = "עובדת חדשה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
+                            string Title = "עובד/ת חדש/ה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
 
                             MailMessage actMSG = new MailMessage(
-                                                    "office@ofekmanage.com",
+                                                     MailUser,
                                                      MailTo,
                                                      Title,
                                                      Body);
@@ -711,7 +746,7 @@ namespace FarmsApi.Services
         }
 
 
-        public static List<Workers> SendSMS(List<Workers> WorkersItems, int IsNew)
+        public static WorkersResult SendSMS(List<Workers> WorkersItems, int Type, int IsNew, int page, int pageSize, string filterText = null)
         {
 
             string SiteRegisterLink = ConfigurationSettings.AppSettings["SiteRegisterLink"].ToString();
@@ -721,7 +756,11 @@ namespace FarmsApi.Services
                 foreach (var item in WorkersItems)
                 {
 
+
+                    item.UserManager = null;
+
                     var Phone = item.PhoneSelular;
+                    var Email = item.Email;
                     var Id = item.Id;
                     var FullName = item.FullName;
                     string EncryptId = AesOperation.EncryptString(Id.ToString());
@@ -729,11 +768,56 @@ namespace FarmsApi.Services
                     EncryptId = EncryptId.Replace("+", "@@").Replace("/","ofekslash");
 
                     //string DecryptId = AesOperation.DecryptString(EncryptId);
-
-
-
-                    if (!string.IsNullOrEmpty(Phone) && Phone.Length > 7)
+                   
+                    if (Type == 2 && !string.IsNullOrEmpty(Email))
                     {
+                        string MailTo = Email;
+
+                        
+
+                        string SmtpHost = ConfigurationSettings.AppSettings["SmtpHost"].ToString();
+                        string MailUser = ConfigurationSettings.AppSettings["MailUser"].ToString();
+                        string MailPassword = ConfigurationSettings.AppSettings["MailPassword"].ToString();
+
+
+
+                        SmtpClient client = new SmtpClient(SmtpHost, 25);
+                        client.Credentials = new System.Net.NetworkCredential(MailUser, MailPassword); //
+                        client.EnableSsl = false;
+
+                        //string Body = Message;// </html>";
+
+                        string Link = SiteRegisterLink + EncryptId + "/";
+
+                        string Body = "<html dir='rtl'><div style='text-align:right'><b>,שלום רב</b><br/>:להשלמת הטופס ולחתימה על 101 לחץ כאן <br/> "+ Link + "<br/></div></html>";// </html>";
+
+                        //Body += " מנהל/ת אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</div></html>";
+
+                        //Body += " השלמת טופס 101  - אופק  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</div></html>";
+
+                        string Title = "השלמת טופס 101 - אופק";
+
+                        MailMessage actMSG = new MailMessage(
+                                                 MailUser,
+                                                 MailTo,
+                                                 Title,
+                                                 Body);
+
+
+                        actMSG.IsBodyHtml = true;
+                      
+
+                        
+                        client.Send(actMSG);
+
+                       
+
+
+                    }
+
+                    else if (Type == 1 && !string.IsNullOrEmpty(Phone) && Phone.Length > 7)
+                    {
+
                         var Message = string.Format("שלום רב {0}\r\nלהשלמת הטופס ולחתימה על 101 לחץ כאן:\r\n{1}\r\n", FullName, SiteRegisterLink + EncryptId + "/");
 
                         var res = SendSMSEndPoint(Phone, Message);
@@ -754,7 +838,7 @@ namespace FarmsApi.Services
                 Context.SaveChanges();
             }
 
-            return GetWorkers(true);
+            return GetWorkers(true,page,pageSize,filterText);
 
         }
 
@@ -987,8 +1071,10 @@ namespace FarmsApi.Services
             using (var Context = new Context())
             {
 
+                Worker.UserManager = null;
 
                 Worker.Status = "נתונים נשמרו";
+
                 Context.Entry(Worker).State = System.Data.Entity.EntityState.Modified;
                 
                 Context.SaveChanges();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -212,5 +213,11 @@ namespace FarmsApi.DataModels
             }
             set { this.GetType().GetProperty(propertyName).SetValue(this, value, null); }
         }
+    }
+
+    public class WorkersResult
+    {
+        public int TotalCount { get; set; }
+        public List<Workers> Items { get; set; }
     }
 }

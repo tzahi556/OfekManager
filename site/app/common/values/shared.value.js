@@ -4,7 +4,7 @@
 
   //  var API_ADDRESS = window.location.href.indexOf('giddyup.co.il') != -1 ? '/api/' : 'http://giddyup.co.il/api/';
 
-    var API_ADDRESS = window.location.href.indexOf('ofekmanage.com') != -1 ? '/api/' : 'http://localhost:44033/';
+    var API_ADDRESS = window.location.href.indexOf('ofekmanage.co.il') != -1 ? '/api/' : 'http://localhost:44033/';
 
     app.value('sharedValues', {
 
