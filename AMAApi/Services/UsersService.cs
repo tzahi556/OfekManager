@@ -634,12 +634,25 @@ namespace FarmsApi.Services
                             }
                         }
 
+                        System.Threading.Thread.Sleep(500);
 
                         // אם עובדת חדש תשלח למשרד
                         if (w.IsNew)
                         {
 
                             var CurrentUser = GetCurrentUser();
+
+                            if(CurrentUser.Email== "default@gmail.com")
+                            {
+                                using (var Context = new Context())
+                                {
+
+                                    CurrentUser = Context.Users.Where(x => x.Id == w.UserId).FirstOrDefault();
+
+                                }
+                               
+
+                            }
 
                             string MailTo = ConfigurationSettings.AppSettings["MailTo"].ToString();
                            
@@ -659,9 +672,25 @@ namespace FarmsApi.Services
                             client.Credentials = new System.Net.NetworkCredential(MailUser, MailPassword); //
                             client.EnableSsl = false;
 
-                            string Body = "<html dir='rtl'><div style='text-align:right'><b>,שלום רב</b>" + "<br/>" + ".מצ''ב קובץ עובדת חדשה<br/>";// </html>";
+                            //string Body = "<html dir='rtl'><div style='text-align:right'><b>,שלום רב</b>" + "<br/>" + ".מצ''ב קובץ עובד/ת חדש/ה<br/>";// </html>";
 
-                            Body += " מנהל/ת אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</div></html>";
+                            //Body += " מנהל/ת אזור -  " + CurrentUser.FirstName + " " + CurrentUser.LastName + "</div></html>";
+
+
+                            string Body = $@"
+                            <html>
+                              <head>
+                                <meta charset='UTF-8' />
+                              </head>
+                              <body dir='rtl' style='direction: rtl; text-align: right; font-family: Arial, sans-serif; font-size: 14px;'>
+                                <p><b>שלום רב,</b></p>
+                                <p>מצ''ב קובץ עובד/ת חדש/ה.</p>
+                                <p>מנהל/ת אזור - {CurrentUser.FirstName} {CurrentUser.LastName}</p>
+                              </body>
+                            </html>";
+
+
+
 
                             string Title = "עובד/ת חדש/ה - " + w.FirstName + " " + w.LastName + " - " + w.Taz;
 
