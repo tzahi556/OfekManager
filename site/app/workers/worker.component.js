@@ -584,19 +584,20 @@
 
                 });
 
-              
+
+                if (this.scope.workerForm.$valid && this.tazfiles.length > 0) {
+
+                    obj["IsValid"] = true;
+
+
+                } else {
+                    obj["IsValid"] = false;
+
+                }
 
                 if (type == 1) {
 
-                    if (this.scope.workerForm.$valid && this.tazfiles.length > 0) {
-
-                        obj["IsValid"] = true;
-
-
-                    } else {
-                        obj["IsValid"] = false;
-                         
-                    }
+                
 
                     //$.blockUI({ css: {}, message: '<h5><div id="loader"></div><div class="tzahiStyle"> אנחנו כרגע שומרים את הנתונים  <br/>אנא המתנ/י...</div></h5>' });
 
@@ -672,7 +673,7 @@
 
 
 
-                       
+                        debugger
 
                         usersService.updateWorker(obj, this.files, this.childs, type).then(function (worker) {
 
@@ -688,7 +689,13 @@
                     }
 
                     else {
-                        alertMessage("יש למלא את כל השדות המסומנים באדום , אלו שדות חובה",3);
+
+                        // זה אומר 
+                        if (this.farmStyle != 1 || this.role == 'farmAdmin' || this.role == 'instructor')
+                            alertMessage("יש למלא את כל השדות המסומנים באדום , אלו שדות חובה", 3);
+                        else
+                            alertMessage("חסרים שדות בטופס, פנה/י למנהל/ת שלך", 3);
+                           
 
                     }
 

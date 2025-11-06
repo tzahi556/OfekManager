@@ -370,7 +370,6 @@
             return Math.ceil(this.workers.TotalCount / this.pageSize);
         };
 
-
         this.getPages = function () {
             const total = this.totalPages();
             const current = this.currentPage;
@@ -401,7 +400,6 @@
             return rangeWithDots;
         };
 
-
         this.onSearchChange = function () {
             if (this.filterText && this.filterText.length >= 2) {
                 this.currentPage = 1;
@@ -416,11 +414,6 @@
                 this.loadWorkers();
             }
         };
-
-
-
-
-
 
         this.loadWorkers = function () {
 
@@ -440,7 +433,6 @@
             //return this.workers.Items.slice(start, start + this.pageSize);
              
         }
-
 
         this.goToFirstPage = function () {
             if (this.currentPage > 1) {

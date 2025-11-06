@@ -39,7 +39,7 @@
 
 <form name="workerForm">
 
-    <div ng-if="$ctrl.farmStyle!=1 || $ctrl.role=='farmAdmin' ||  $ctrl.role=='instructor'">
+    <div ng-show="$ctrl.farmStyle!=1 || $ctrl.role=='farmAdmin' ||  $ctrl.role=='instructor'">
 
         <!--פרטי מעביד - 101-->
         <div class="col-md-12 nopadding">
@@ -176,11 +176,11 @@
                             </div>
 
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
+                        <div class="col-md-3" >
+                            <div class="form-group" >
                                 <label>צילום תעודת זהות וספח</label><br />
 
-                                <div class="panel panel-default">
+                                <div class="panel panel-default" ng-style="$ctrl.tazfiles.length==0 ? {'border': '1px solid red'} : {}">
                                     <div class="panel-heading">
                                         קבצים
                                     </div>
@@ -1845,8 +1845,6 @@
 
             </div>
         </div>
-
-
 
         <!--טופס הסכם-->
         <div class="col-md-12 nopadding">

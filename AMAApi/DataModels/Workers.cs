@@ -143,7 +143,8 @@ namespace FarmsApi.DataModels
         public string Status { get; set; }
       
         public DateTime? DateRigster { get; set; }
-
+        public DateTime? DateSend { get; set; }
+        
         public string ImgData { get; set; }
 
         public string BankNumName { get; set; }
@@ -153,7 +154,7 @@ namespace FarmsApi.DataModels
         public string UniqNumber { get; set; }
         public bool IsNew { get; set; }
 
-        public bool IsSendSMS { get; set; }
+        public int? IsSendSMS { get; set; }
 
         public bool IsValid { get; set; }
 

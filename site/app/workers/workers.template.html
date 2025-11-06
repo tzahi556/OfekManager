@@ -39,6 +39,7 @@
                     <th>אימייל</th>
                     <th>ת.עדכון</th>
                     <th>סטטוס</th>
+                    <th>ת.שליחה</th>
                     <th>SMS/Mail</th>
                     <th>PDF</th>
                     <th></th>
@@ -62,16 +63,19 @@
                     <td>{{worker.Email}}</td>
                     <td>{{worker.DateRigster | ildate: 'HH:mm DD/MM/YYYY '}}</td>
                     <td>{{worker.Status}}</td>
-                    <td>{{worker.IsSendSMS==1 ? 'נשלח':'' }}</td>
-                    <td><a class="btn  btn-success" ng-href="{{$ctrl.uploadsUri + worker.Id + '/OfekAllPdf.pdf'}}" target="_blank">PDF</a></td>
+                    <td>{{(worker.DateSend) ? (worker.DateSend | ildate: 'HH:mm DD/MM/YYYY ') :''}}</td>
+                    <td>{{worker.IsSendSMS==1 ? 'SMS':(worker.IsSendSMS==2 ? 'Email':'') }}</td>
+                    <td><a ng-if="worker.Status=='נשלח למשרד'" class="btn btn-success" ng-href="{{$ctrl.uploadsUri + worker.Id + '/OfekAllPdf.pdf'}}" target="_blank">PDF</a></td>
                     <td> <button class="btn  btn-warning" ui-sref="worker({id:worker.Id})">עדכון</button></td>
                     <td> <button class="btn  btn-danger" ng-click="$ctrl.delete(worker.Id)">מחק עובד</button></td>
-                    <td width="5%"><input style="width:52px;height:20px" type="checkbox" ng-model="worker.IsSelected" /></td>
-
+                    <td ng-if="worker.IsValid==1" width="5%"><input style="width:52px;height:20px" type="checkbox" ng-model="worker.IsSelected" /></td>
+                    <td ng-if="worker.IsValid!=1" width="5%" title="פרטי עובד/ת אינם תיקניים, יש להכנס ולעדכן שדות שהם חובה">
+                        <img src="../../images/_notArrive.png" style="height:24px;margin-right:13px;"/>
+                    </td>
                 </tr>
                 <tr>
                     <td colspan="12" style="text-align:center; padding:10px;">
-                        סך הכול: <strong>{{ $ctrl.workers.TotalCount | number }}</strong> רשומות
+                        סך הכל: <strong>{{ $ctrl.workers.TotalCount | number }}</strong> רשומות
                     </td>
                 </tr>
             </tbody>

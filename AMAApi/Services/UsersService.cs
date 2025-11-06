@@ -710,6 +710,9 @@ namespace FarmsApi.Services
 
                             w.Status = "נשלח למשרד";
 
+                            // צחי הוסיף אפשרות שאם שלחו שוב למשרד מקבל עדכון
+                            w.DateRigster = DateTime.Now;
+
                             AddToLogDB("", "", " שליחה למשרד של עובדת חדשה  " + w.Id, null, "", w.Id);
                         }
                         //101 שנתי 
@@ -839,8 +842,11 @@ namespace FarmsApi.Services
                         
                         client.Send(actMSG);
 
-                       
 
+                        item.IsSendSMS = 2;
+                        item.DateSend = DateTime.Now;
+
+                        Context.Entry(item).State = System.Data.Entity.EntityState.Modified;
 
                     }
 
@@ -855,7 +861,8 @@ namespace FarmsApi.Services
 
                         if (resObj["success"] == "true")
                         {
-                            item.IsSendSMS = true;
+                            item.IsSendSMS = 1;
+                            item.DateSend = DateTime.Now;
 
                             Context.Entry(item).State = System.Data.Entity.EntityState.Modified;
 

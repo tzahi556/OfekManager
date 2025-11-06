@@ -17,17 +17,17 @@ namespace FarmsApi.Services
         [HttpGet]
         public string DeleteYear()
         {
-            using (var Context = new Context())
-            {
+            //using (var Context = new Context())
+            //{
 
-                var Wor = Context.Workers.Where(x => x.ShnatMas == "2021").ToList();
-                foreach (var item in Wor)
-                {
-                    DeleteWorkerLoop(item.Id,true);
-                }
+            //    //var Wor = Context.Workers.Where(x => x.ShnatMas == "2021").ToList();
+            //    //foreach (var item in Wor)
+            //    //{
+            //    //    DeleteWorkerLoop(item.Id,true);
+            //    //}
 
 
-            }
+            //}
 
             //UploadFromAccess uac = new UploadFromAccess();
             //uac.UpdateUsersLessons();
@@ -36,23 +36,39 @@ namespace FarmsApi.Services
 
         }
 
-
-        public static void DeleteWorkerLoop(int Id, bool isnew)
+        [Route("deleteWorkersByDate/{dateRigester}")]
+        [HttpGet]
+        public string DeleteWorkersByDate(string dateRigester)
         {
             using (var Context = new Context())
             {
-                var Worker = Context.Workers.SingleOrDefault(u => u.Id == Id);
 
+                DateTime dt = Convert.ToDateTime(dateRigester);
 
-                Context.Workers.Remove(Worker);
+                var WorkersList = Context.Workers.Where(x=>x.DateRigster < dt || x.FirstName==null).ToList();
+
+                var WorkersListIds = WorkersList.Select(x => x.Id).ToList();    
+
+                var WorkersFiles = Context.Files.Where(x=> WorkersListIds.Contains(x.WorkerId)).ToList();
+                Context.Files.RemoveRange(WorkersFiles);
+
+                var WorkerChilds = Context.WorkerChilds.Where(x => WorkersListIds.Contains(x.WorkerId)).ToList();
+                Context.WorkerChilds.RemoveRange(WorkerChilds);
+
+                Context.Workers.RemoveRange(WorkersList);
+               
 
                 Context.SaveChanges();
 
+                foreach (var Id in WorkersListIds)
+                {
+                    UsersService.DeleteDirectory(Id.ToString());
+                }
 
-                UsersService.DeleteDirectory(Id.ToString());
+                //UsersService.DeleteDirectory(Id.ToString());
 
+                return "All delete";
 
-               
             }
         }
 
