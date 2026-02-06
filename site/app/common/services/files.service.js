@@ -59,8 +59,8 @@
             return deferred.promise;
         }
 
-        function _delete(filename) {
-            return $http.get(sharedValues.apiUrl + 'files/delete?filename=' + filename);
+        function _delete(filename,workerid) {
+            return $http.get(sharedValues.apiUrl + 'files/delete?filename=' + filename + '&workerid=' + workerid);
         }
     }
 

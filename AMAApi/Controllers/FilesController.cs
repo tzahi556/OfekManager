@@ -103,7 +103,8 @@ namespace FarmsApi.Controllers
 
 
                     return Ok(false);
-                };
+                }
+                ;
 
 
             }
@@ -112,100 +113,129 @@ namespace FarmsApi.Controllers
 
 
 
+            //string fileList = "";
+            //for (int i = 0; i < file.FileData.Count; i++)
+            //{
+            //    var source = file.FileData[i].LocalFileName;
+
+            //    var dest = root + "/" + file.FileData[i].Headers.ContentDisposition.FileName.Replace("\"", "");
+            //    //dest = filterFilename(dest);
+
+            //    if (File.Exists(dest))
+            //    {
+            //        try
+            //        {
+            //            File.Delete(dest);
+            //        }
+            //        catch (Exception ex) { }
+            //    }
+
+            //    try
+            //    {
+            //        File.Move(source, dest);
+            //    }
+            //    catch (Exception ex)
+            //    {
+
+            //        //File.Delete(dest);
+            //    }
+
+
+
+
+
+            //    if (i == 0)
+            //    {
+            //        fileList += Path.GetFileName(dest);
+
+            //    }
+            //    else
+            //    {
+            //        fileList += "," + Path.GetFileName(dest);
+            //    }
+
+            //}
+            //return Ok(fileList);
+
             string fileList = "";
+
             for (int i = 0; i < file.FileData.Count; i++)
             {
                 var source = file.FileData[i].LocalFileName;
 
-                var dest = root + "/" + file.FileData[i].Headers.ContentDisposition.FileName.Replace("\"", "");
-                //dest = filterFilename(dest);
+                var fileName = file.FileData[i].Headers.ContentDisposition.FileName.Trim('"');
+                var dest = Path.Combine(root, fileName);
 
-                if (File.Exists(dest))
-                {
-                    File.Delete(dest);
-                }
+                // שם זמני ייחודי באותה תיקייה
+                var tempDest = Path.Combine(root, Guid.NewGuid().ToString("N") + "_" + fileName);
 
+                // 1) קודם כל מעבירים מה-temp של Multipart ל-tempDest (כדי לא לאבד את source)
+                TryMoveWithRetry(source, tempDest);
 
-                File.Move(source, dest);
+                // 2) עכשיו מחליפים את הקובץ הסופי
+                ReplaceWithRetry(tempDest, dest);
 
-
-
-
-
-
-                if (i == 0)
-                {
-                    fileList += Path.GetFileName(dest);
-
-                }
-                else
-                {
-                    fileList += "," + Path.GetFileName(dest);
-                }
-
+                fileList += (i == 0) ? Path.GetFileName(dest) : "," + Path.GetFileName(dest);
             }
 
-
             return Ok(fileList);
+
+        }
+
+        static void TryMoveWithRetry(string from, string to)
+        {
+            for (int i = 0; i < 6; i++)
+            {
+                try { File.Move(from, to); return; }
+                catch (IOException) { System.Threading.Thread.Sleep(150); }
+                catch (UnauthorizedAccessException) { System.Threading.Thread.Sleep(150); }
+            }
+
+            // fallback
+            File.Copy(from, to, true);
+            File.Delete(from);
+        }
+
+        static void ReplaceWithRetry(string from, string to)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                try
+                {
+                    // אם קיים יעד – מוחקים (עם ניסיון חוזר)
+                    if (File.Exists(to))
+                    {
+                        TryDeleteWithRetry(to);
+                    }
+
+                    File.Move(from, to);
+                    return;
+                }
+                catch (IOException) { System.Threading.Thread.Sleep(200); }
+                catch (UnauthorizedAccessException) { System.Threading.Thread.Sleep(200); }
+            }
+
+            // אם עדיין נעול: נשאיר את הקובץ החדש בשם אחר ולא נאבד אותו
+            var dir = Path.GetDirectoryName(to);
+            if (string.IsNullOrEmpty(dir))
+                dir = Directory.GetCurrentDirectory(); // או Directory.GetCurrentDirectory()
+
+            var fallback = Path.Combine(dir, "NEW_" + Path.GetFileName(to));
+            File.Move(from, fallback);
+        }
+
+        static void TryDeleteWithRetry(string path)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                try { File.Delete(path); return; }
+                catch (IOException) { System.Threading.Thread.Sleep(200); }
+                catch (UnauthorizedAccessException) { System.Threading.Thread.Sleep(200); }
+            }
         }
 
 
-        //[Route("upload/{folder}/{workerid}")]
-        //[HttpPost]
-        //public async Task<IHttpActionResult> Upload(string folder, int workerid)
-        //{
 
-
-
-        //    if (!Request.Content.IsMimeMultipartContent())
-        //        throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-
-        //    string root = HttpContext.Current.Server.MapPath("~/Uploads/");
-
-        //    string WorkerPath = root + workerid.ToString();
-
-        //    if (!Directory.Exists(WorkerPath))
-        //    {
-        //        Directory.CreateDirectory(WorkerPath);
-
-        //    }
-
-        //    root = WorkerPath;
-
-        //    var provider = new MultipartFormDataStreamProvider(root);
-
-        //    var file = await Request.Content.ReadAsMultipartAsync(provider);
-
-
-        //    string fileList = "";
-        //    for (int i = 0; i < file.FileData.Count; i++)
-        //    {
-        //        var source = file.FileData[i].LocalFileName;
-        //        var dest = root + "/" + file.FileData[i].Headers.ContentDisposition.FileName.Replace("\"", "");
-        //        //dest = filterFilename(dest);
-
-        //        if (File.Exists(dest))
-        //        {
-        //            File.Delete(dest);
-        //        }
-
-
-        //        File.Move(source, dest);
-        //        if (i == 0)
-        //        {
-        //            fileList += Path.GetFileName(dest);
-
-        //        }
-        //        else
-        //        {
-        //            fileList += "," + Path.GetFileName(dest);
-        //        }
-
-        //    }
-
-
-        //    return Ok(fileList);
-        //}
 
 
         [Route("uploadformail/{folder}/{workerid}/{text}")]
@@ -237,7 +267,7 @@ namespace FarmsApi.Controllers
 
 
             string fileList = "";
-         
+
 
             try
             {
@@ -257,7 +287,7 @@ namespace FarmsApi.Controllers
 
                 Body += text + "</html>";
 
-                string Title = "הודעה חדשה - " +CurrentUser.FirstName + " " + CurrentUser.LastName;
+                string Title = "הודעה חדשה - " + CurrentUser.FirstName + " " + CurrentUser.LastName;
 
                 MailMessage actMSG = new MailMessage(
                                         "office@ofekmanage.com",
@@ -270,17 +300,17 @@ namespace FarmsApi.Controllers
                 for (int i = 0; i < file.FileData.Count; i++)
                 {
                     FileStream fStream = new FileStream(file.FileData[i].LocalFileName, FileMode.Open);
-                  
+
                     Attachment attachment = new Attachment(fStream, file.FileData[i].Headers.ContentDisposition.FileName.Replace("\"", ""), file.FileData[i].Headers.ContentType.MediaType);
 
                     actMSG.Attachments.Add(attachment);
 
-                   // fStream.Close();
+                    // fStream.Close();
 
                 }
                 client.Send(actMSG);
 
-               
+
 
 
             }
@@ -290,7 +320,7 @@ namespace FarmsApi.Controllers
             }
             finally
             {
-               
+
 
             }
 
@@ -327,10 +357,17 @@ namespace FarmsApi.Controllers
 
         [Route("delete")]
         [HttpGet]
-        public IHttpActionResult Delete(string filename)
+        public IHttpActionResult Delete(string filename, string workerid)
         {
             string root = HttpContext.Current.Server.MapPath("~/Uploads/");
-            File.Delete(root + filename);
+            try
+            {
+                File.Delete(root + "/" + workerid + "/" + filename);
+            }
+            catch (Exception ex)
+            {
+
+            }
             return Ok();
         }
 

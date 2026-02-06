@@ -325,7 +325,7 @@
                     controllerAs: '$ctrl',
                     resolve: {
                         users: function (usersService) {
-                            return usersService.getUsers(['instructor', 'profAdmin']);
+                            return usersService.getUsers(['instructor', 'profAdmin','farmAdmin']);
                         }
                     }
                 }

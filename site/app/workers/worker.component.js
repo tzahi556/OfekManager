@@ -530,7 +530,7 @@
 
 
         function _removeFile(file, type) {
-            filesService.delete(file).then(function () {
+            filesService.delete(file, this.worker.Id).then(function () {
                 if (type == 1)
                     for (var i in this.files) {
                         if (this.files[i].FileName == file) {

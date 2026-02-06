@@ -767,8 +767,19 @@ namespace FarmsApi.Services
                 {
                     if (file.ToLower().Contains(".pdf") && !file.Contains("OfekAll"))
                     {
+
+                        //צחי הוסיף צריך לבדוק תקינות
+                        if (!PdfGuard.IsPdfOk(file, out var why))
+                        {
+                            // AddToLogDB("", "", $"PDF skipped: {Path.GetFileName(file)} | {why}", null, "", w.Id);
+                            continue;
+                        }
+
                         //  Console.WriteLine(i + ". Adding: " + file);
-                        pdf.AddDocument(new PdfReader(file));
+                        newReader = new PdfReader(file);
+                        pdf.AddDocument(newReader);
+                        newReader.Close();
+                        newReader.Dispose();
 
                     }
 
@@ -831,6 +842,12 @@ namespace FarmsApi.Services
                 {
                     Paragraph paragraph = new Paragraph();
 
+                    //צחי הוסיף צריך לבדוק תקינות
+                    if (!PdfGuard.IsImageOk(item, out var why))
+                    {
+                        //AddToLogDB("", "", $"Image skipped: {Path.GetFileName(item)} | {why}", null, "", w.Id);
+                        continue;
+                    }
 
 
                     iTextSharp.text.Image jpg = iTextSharp.text.Image.GetInstance(item);
